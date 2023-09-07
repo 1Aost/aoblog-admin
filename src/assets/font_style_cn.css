@@ -1,0 +1,23 @@
+/*字体定义*/
+@font-face {
+    font-family: st;
+    src: url('../fonts/ZiYuYongSongTi-2.ttf');
+}
+
+.font-style{
+    font-family: st;
+}
+
+
+.card_4 .box a{
+    padding-left: 0.05rem;
+}
+@media (max-width: 767px) {
+    .more_weather_notice{
+        width: auto;
+    }
+    .ts_qa_items li{
+        margin-left: 0;
+        margin-right: 0;
+    }
+}

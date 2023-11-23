@@ -7,10 +7,22 @@ import type { ColumnsType } from 'antd/es/table';
 import "./index.css"
 import apiFun from '../../api';
 import { useNavigate } from 'react-router-dom';
+interface MessageType {
+    code: string // 返回的状态码
+    msg: string // 提示信息
+    data: null | Array<AdminType>
+}
+interface AdminType {
+    admin_password: string
+    admin_type: string
+    admin_username: string
+    avatar: string
+    id: number
+}
 interface DataType {
-    key:string,
-    id: number;
-    admin_username: string;
+    key:string
+    id: number
+    admin_username: string
 }
 const layout = {
     labelCol: { span: 8 },
@@ -66,19 +78,19 @@ const Manager:React.FC=()=>{
         },
     ];
     const [data,setData]=useState<DataType[]>([]);
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState<boolean>(false);
     // 区分新增和修改的情况  1为新增 2为修改
-    const [type,setType]=useState(0);
+    const [type,setType]=useState<number>(0);
     // 为修改的情况
-    const [ids,setIds]=useState(0);
-    const [subtype,setSubtype]=useState<any>('');
-    const [status,setStatus]=useState<any>('');
+    const [ids,setIds]=useState<number>(0);
+    const [subtype,setSubtype]=useState<string>('');
+    const [status,setStatus]=useState<string>('');
     const navigate=useNavigate();
-    const showModal = () => {
+    const showModal = (): void => {
         form.resetFields();
         setOpen(true);
     };
-    const handleCancel = () => {
+    const handleCancel = ():void => {
         console.log('Clicked cancel button');
         setOpen(false);
     };
@@ -88,14 +100,12 @@ const Manager:React.FC=()=>{
 
     // 获取数据的函数
     function fetchData() {
-        apiFun.getAllAdmins().then((res:any) => {
-            const newData = res.data.map((item, index) => ({
+        apiFun.getAllAdmins().then((res: MessageType) => {
+            const newData = (res.data as Array<AdminType>).map((item, index) => ({
                 ...item,
                 key: (index + 1).toString(),
             }));
             setData(newData);
-            console.log(data);
-            
         });
     }
     /**
@@ -147,16 +157,14 @@ const Manager:React.FC=()=>{
         })
     };
     //  新增
-    function handleAdd() {
+    function handleAdd(): void {
         setType(1);
         showModal();
     }
     // 删除
-    function handleDelete(record:any) {
+    function handleDelete(record: DataType) {
         return ()=>{
-            console.log(record);
-            apiFun.deleteAdmin({id:record.id}).then((res:any)=>{
-                console.log(res);
+            apiFun.deleteAdmin({id:record.id}).then((res: MessageType)=>{
                 if(res.code==='6001') {
                     message.error(res.msg);
                 }else {
@@ -168,13 +176,13 @@ const Manager:React.FC=()=>{
         }
     }
     // 修改中type的选择
-    const onTypeChange = (value: string) => {
+    const onTypeChange = (value: string): void => {
         setSubtype(value);
     };
     // 新增和修改的回调函数
-    const onFinish = (values: any) => {
+    const onFinish = (values: {admin_password: string,admin_type: string,admin_username: string}) => {
         if(type===1) {
-            apiFun.addAdmin({...values,avatar:imageUrl}).then((res:any)=>{
+            apiFun.addAdmin({...values,avatar:imageUrl}).then((res: MessageType)=>{
                 if(res.code==='0000') {
                     message.success(res.msg);
                     setOpen(false);
@@ -185,7 +193,7 @@ const Manager:React.FC=()=>{
                 form.resetFields();
             })
         }else if(type===2) {
-            apiFun.changeAdmin({id:ids,...values,avatar:imageUrl}).then((res:any)=>{
+            apiFun.changeAdmin({id:ids,...values,avatar:imageUrl}).then((res: MessageType)=>{
                 if(res.code==='0000') {
                     message.success(res.msg);
                     setOpen(false);
@@ -197,11 +205,11 @@ const Manager:React.FC=()=>{
             })
         }
     };
-    const onFinishFailed = (errorInfo: any) => {
+    const onFinishFailed = (errorInfo: any): void => {
         console.log('Failed:', errorInfo);
     };
     // 修改
-    function handleChange(record:any) {
+    function handleChange(record: DataType): ()=> void {
         return ()=>{
             setType(2);
             showModal();
@@ -210,15 +218,15 @@ const Manager:React.FC=()=>{
         }
     }
     // 表单的重置
-    const onReset = () => {
+    const onReset = (): void => {
         form.resetFields();
     };
     useEffect(()=>{
         // 根据token获取用户信息
         let admin_token=localStorage.getItem("admin_token")
-        apiFun.getAdminByToken({admin_token}).then((res:any)=>{
+        apiFun.getAdminByToken({admin_token}).then((res: MessageType)=>{
             if(res.code==='0000') {
-                setStatus(res.data[0].admin_type);
+                setStatus((res.data as Array<AdminType>)[0].admin_type);
             }else if(res.code==='1111') {
                 message.error(res.msg);
                 navigate("/login")

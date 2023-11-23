@@ -16,27 +16,27 @@ apiFun.getAllUsers=function(params:any) {
 	return https.get("/users",params);
 }
 /* 根据id删除用户 */
-apiFun.deleteUser=function(params:any) {
+apiFun.deleteUser=function(params: {id: number}) {
 	return https.get("/users/no",params);
 }
 /* 新增用户 */
-apiFun.addUser=function(params:any) {
+apiFun.addUser=function(params: {username: string,password: string,avatar: string}) {
 	return https.post("/users/new",params);
 }
 /* 获取所有管理员信息 */
-apiFun.getAllAdmins=function(params:any) {
+apiFun.getAllAdmins=function(params: any) {
 	return https.post("/api/admin/all",params);
 }
 /* 根据id删除管理员 */
-apiFun.deleteAdmin=function(params:any) {
+apiFun.deleteAdmin=function(params: {id: number}) {
 	return https.get("/api/admin/no",params);
 }
 /* 新增管理员 */
-apiFun.addAdmin=function(params:any) {
+apiFun.addAdmin=function(params: {admin_password: string,admin_type: string,admin_username: string,avatar: string}) {
 	return https.post("/api/admin/new",params);
 }
 /* 修改管理员 */
-apiFun.changeAdmin=function(params:any) {
+apiFun.changeAdmin=function(params: any) {
 	return https.post("/api/admin/oldtonew",params);
 }
 /* 上传头像 */
@@ -44,7 +44,7 @@ apiFun.uploadAvatar=function(params:any) {
 	return https.postImg("/api/Upload/avatar",params)
 }
 /* 根据token获取管理员信息 */
-apiFun.getAdminByToken=function(params:any) {
+apiFun.getAdminByToken=function(params: {admin_token: string}) {
 	return https.post("/api/admin/bytoken",params);
 }
 
@@ -80,23 +80,30 @@ apiFun.saveArticle=function(params:any) {
 	return https.post("/api/articles/saveArticle",params);
 }
 /* 删除文章 */
-apiFun.deleteArticle=function(params:any) {
+apiFun.deleteArticle=function(params: {id: number}) {
 	return https.get("/api/articles/noarticles",params);
 }
+interface ChangeType {
+	id: number
+    article_introduction: string
+    article_title: string
+    article_type: string
+	article_img: string
+}
 /* 修改文章 */
-apiFun.changeArticle=function(params:any) {
+apiFun.changeArticle=function(params: ChangeType) {
 	return https.post("/api/articles/oldtonew",params);
 }
 /* 根据文章的id获取所有评论 */
-apiFun.getComments=function(params:any) {
+apiFun.getComments=function(params: {id: number}) {
 	return https.get("/api/articles/comments",params);
 }
 /* 根据文章的名称获取文章id */
-apiFun.getIdByName=function(params:any) {
+apiFun.getIdByName=function(params: {name: string}) {
 	return https.get("/api/articles/idbyname",params);
 }
 /* 根据id修改文章评论的状态 */
-apiFun.changeCommentsStatus=function(params:any) {
+apiFun.changeCommentsStatus=function(params: {id: number,comments_status: number}) {
 	return https.post("/api/articles/commentstatus",params);
 }
 /* 根据id删除文章评论 */
@@ -104,7 +111,7 @@ apiFun.deleteComments=function(params:any) {
 	return https.get("/api/articles/nocomment",params);
 }
 /* 根据id管理员回复文章评论 */
-apiFun.replyComments=function(params:any) {
+apiFun.replyComments=function(params: {reply: string,comments_id: number}) {
 	return https.post("/api/articles/replycomment",params);
 }
 
@@ -114,15 +121,15 @@ apiFun.getAllTypes=function() {
 	return https.get("/api/types/all");
 }
 /* 新增类别 */
-apiFun.addType=function(params:any) {
+apiFun.addType=function(params: {type: string}) {
 	return https.post("/api/types/new",params);
 }
 /* 修改类别 */
-apiFun.changeType=function(params:any) {
+apiFun.changeType=function(params: {id: number,type: string}) {
 	return https.post("/api/types/oldtonew",params);
 }
 /* 根据id删除类别 */
-apiFun.deleteType=function(params:any) {
+apiFun.deleteType=function(params: {id: number}) {
 	return https.get("/api/types/no",params);
 }
 
@@ -138,7 +145,7 @@ apiFun.deleteLikes=function(params:any) {
 apiFun.selectLikesByUserId=function(params:any) {
 	return https.post("/api/likes/searchbyuserid",params);
 }
-apiFun.selectLikesByArticleId=function(params:any) {
+apiFun.selectLikesByArticleId=function(params: {id: number}) {
 	return https.post("/api/likes/searchbyarticleid",params);
 }
 

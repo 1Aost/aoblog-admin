@@ -5,23 +5,34 @@ import { EditOutlined, LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import layout from 'antd/es/layout';
 import apiFun from '../../api';
 import "./index.css"
-
+interface MessageType {
+  code: string
+  msg:string
+  data: null | Array<AdminType>
+}
+interface AdminType {
+  admin_password: string
+  admin_type: string
+  admin_username: string
+  avatar: string
+  id: number
+}
 const Ownmessage:React.FC=()=>{
   const [admin,setAdmin]=useState<any>({});
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState<boolean>(false);
   const navigate=useNavigate();
   const [form]=Form.useForm();
   // Modal对话框
-  const showModal = () => {
+  const showModal = (): void => {
     form.resetFields();
     setOpen(true);
   };
-  const handleCancel = () => {
+  const handleCancel = (): void => {
     console.log('Clicked cancel button');
     setOpen(false);
   };
   // 表单的重置
-  const onReset = () => {
+  const onReset = (): void => {
     form.resetFields();
   };
   /**
@@ -71,12 +82,12 @@ const Ownmessage:React.FC=()=>{
       setImageUrl("./avatar/"+res.url);
     })
   };
-  function fetchData() {
+  function fetchData(): void {
     // 根据token获取用户信息
     let admin_token=localStorage.getItem("admin_token")
-    apiFun.getAdminByToken({admin_token}).then((res:any)=>{
+    apiFun.getAdminByToken({admin_token}).then((res: MessageType)=>{
       if(res.code==='0000') {
-        setAdmin(res.data[0]);
+        setAdmin((res.data as Array<AdminType>)[0]);
       }else if(res.code==='1111') {
         message.error(res.msg);
         navigate("/login");
@@ -88,7 +99,7 @@ const Ownmessage:React.FC=()=>{
   useEffect(()=>{
     fetchData();
   },[]);
-  const onFinish = (values: any) => {
+  const onFinish = (values: any): void => {
     apiFun.changeAdmin({id:admin.id,...values,avatar:imageUrl,admin_type:admin.admin_type}).then((res:any)=>{
       if(res.code==='0000') {
         message.success(res.msg);
@@ -99,10 +110,10 @@ const Ownmessage:React.FC=()=>{
       }
     })
   };
-  const onFinishFailed = (errorInfo: any) => {
+  const onFinishFailed = (errorInfo: any): void => {
     console.log('Failed:', errorInfo);
   };
-  function handleChange() {
+  function handleChange(): void {
     showModal();
   }
   return (

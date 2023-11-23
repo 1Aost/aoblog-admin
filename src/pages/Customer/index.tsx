@@ -6,10 +6,21 @@ import { PlusOutlined, LoadingOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import "./index.css"
 import apiFun from '../../api';
+interface MessageType {
+    code: string
+    msg: string
+    data: null | Array<UserType>
+}
 interface DataType {
     key:string,
     id: number;
     username: string;
+}
+interface UserType {
+    avatar: string
+    id: number
+    password: string
+    username: string
 }
 const Customer:React.FC=()=>{
     const columns: ColumnsType<DataType> = [
@@ -48,13 +59,13 @@ const Customer:React.FC=()=>{
     const [form]=Form.useForm();
     const [data,setData]=useState<DataType[]>([]);
 
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState<boolean>(false);
 
-    const showModal = () => {
+    const showModal = (): void => {
         form.resetFields();
         setOpen(true);
     };
-    const handleCancel = () => {
+    const handleCancel = (): void => {
         console.log('Clicked cancel button');
         setOpen(false);
     };
@@ -63,22 +74,22 @@ const Customer:React.FC=()=>{
     },[]);
 
     // 获取数据的函数
-    function fetchData() {
-        apiFun.getAllUsers().then((res) => {
-            // console.log(res);
-            const newData = res.data.map((item, index) => ({
+    async function fetchData() {
+        try {
+            const res: MessageType=await apiFun.getAllUsers();
+            const newData = (res.data as Array<UserType>).map((item: UserType, index) => ({
                 ...item,
                 key: (index + 1).toString(),
             }));
             setData(newData);
-        });
+        }catch(err) {
+            message.error("出错了，请稍后重试");
+        }
     }
     // 删除
-    function handleDelete(record:any) {
+    function handleDelete(record: DataType): ()=> void {
         return ()=>{
-            console.log(record);
-            apiFun.deleteUser({id:record.id}).then((res)=>{
-                console.log(res);
+            apiFun.deleteUser({id:record.id}).then((res: MessageType)=>{
                 if(res.code==='6001') {
                     message.error(res.msg);
                 }else {
@@ -95,7 +106,7 @@ const Customer:React.FC=()=>{
     // 图片地址
     const [imageUrl, setImageUrl] = useState<string>();
     // 加载
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState<boolean>(false);
     // 上传前
     const beforeUpload = (file: { type: string; size: number; }) => {
         // 图片格式
@@ -141,11 +152,11 @@ const Customer:React.FC=()=>{
         })
     };
     //  新增
-    function handleAdd() {
+    function handleAdd(): void {
         showModal();
     }
-    const onFinish = (values: any) => {
-        apiFun.addUser({...values,avatar:imageUrl}).then((res)=>{
+    const onFinish = (values: {username: string,password: string}): void => {
+        apiFun.addUser({...values,avatar:imageUrl}).then((res: MessageType)=>{
             if(res.code==='0000') {
                 message.success(res.msg);
                 setOpen(false);
@@ -157,7 +168,7 @@ const Customer:React.FC=()=>{
         form.resetFields();
     };
 
-    const onFinishFailed = (errorInfo: any) => {
+    const onFinishFailed = (errorInfo: any): void => {
         console.log('Failed:', errorInfo);
     };
     return (
@@ -234,5 +245,3 @@ const Customer:React.FC=()=>{
     )
 }
 export default Customer;
-
-

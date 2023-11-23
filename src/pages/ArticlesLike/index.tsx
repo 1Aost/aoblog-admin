@@ -1,16 +1,34 @@
+import React, { useEffect, useState } from 'react'
 import { message, Select, Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import React, { useEffect, useState } from 'react'
 import apiFun from '../../api';
-interface DataType {
+interface MessageType {
+    code: string
+    msg:string
+    data: null | Array<ArticleType> | Array<LikeType>
+}
+interface LikeType {
     likes_id: number,
     user_id2: number,
     article_id1: number,
     user_name:string
 }
+interface ArticleType {
+    id: number
+    article_url: string
+    article_img: string
+    article_type: string
+    article_likes: number
+    article_views: number
+    article_reviews: number
+    article_title: string
+    article_introduction: string
+    article_time: string
+    comments_length: number
+}
 const ArticlesLike:React.FC=()=>{
     const [articleName,setArticleName]=useState<string>('');
-    const columns: ColumnsType<DataType> = [
+    const columns: ColumnsType<LikeType> = [
         {
             title: 'Id',
             dataIndex: 'likes_id',
@@ -30,29 +48,36 @@ const ArticlesLike:React.FC=()=>{
         },
     ];
     
-    const [likes,setLikes]=useState<any>([]);
-    const [id,setId]=useState<any>(0);
-    const [article,setArticle]=useState<any>([]);
-    const [loading, setLoading] = useState(true); // Loading state
+    const [likes,setLikes]=useState<Array<LikeType>>([]);
+    const [id,setId]=useState<number>(0);
+    const [article,setArticle]=useState<string[]>([]);
+    const [loading, setLoading] = useState<boolean>(true); // Loading state
     // 根据文章名称获取文章的id
-    function fetchId(name:string) {
-        apiFun.getIdByName({name}).then((res:any) => {
+    async function fetchId(name:string): Promise<void> {
+        try {
+            const res: MessageType=await apiFun.getIdByName({name});
             if(res.code==='0000') {
-                setId(res.data[0].id)
+                setId((res.data as Array<ArticleType>)[0].id)
             }else {
                 message.error(res.msg);
             }
-        });
+        }catch(err) {
+            message.error("出错了，请稍后重试");
+        }
     }
     // 获取点赞数据
-    function fetchData() {
-        apiFun.selectLikesByArticleId({id:id}).then((res:any)=>{
+    async function fetchData(): Promise<void> {
+        try {
+            const res: MessageType=await apiFun.selectLikesByArticleId({id:id});
+            console.log(res);
             if(res.code==='0000') {
-                setLikes(res.data);
+                setLikes(res.data as Array<LikeType>);
             }else {
                 message.error(res.msg);
             }
-        })
+        }catch(err) {
+            message.error("出错了，请联系管理员");
+        }
     }
     // 获取指定文章的所有点赞信息
     useEffect(()=>{
@@ -60,16 +85,23 @@ const ArticlesLike:React.FC=()=>{
     },[id])
     // 获取所有文章名称
     useEffect(() => {
-        apiFun.getAllArticles().then((res: any) => {
-            if (res.code === '0000') {
-                const articleData = res.data.map((item: any) => item.article_title);
-                setArticle(articleData);
-                setLoading(false);
+        (async function() {
+            try {
+                const res: MessageType=await apiFun.getAllArticles();
+                if (res.code === '0000') {
+                    const articleData: string[] = (res.data as Array<ArticleType>).map((item: ArticleType) => item.article_title);
+                    setArticle(articleData);
+                    setLoading(false);
+                }else {
+                    message.error(res.msg);
+                }
+            }catch(err) {
+                message.error("出错了，请联系管理员");
             }
-        });
+        })()
     }, []);
 
-    const onChange = (value: string) => {
+    const onChange: (value: string) => void = (value: string): void => {
         setArticleName(value);
         fetchId(value);
     };

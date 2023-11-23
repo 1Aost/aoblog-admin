@@ -1,24 +1,22 @@
 import React, { useEffect } from 'react'
 import {useNavigate} from "react-router-dom"
-// 引入相关Hooks
-// import { useDispatch } from 'react-redux';
-// 引入对应的方法
-// import { change } from '../../store/reducers/userSlice';
 import { Button, Form, Input,Card, message } from 'antd';
 import {tsParticles} from "tsparticles"
-import "./index.css"
 import apiFun from '../../api';
 import { timestampToTime } from '../../api/utils';
+import "./index.css"
+interface MessageType {
+  code: string // 返回的状态码
+  msg: string // 提示信息
+  data: string | null // 携带的token
+}
 const Login: React.FC = () => {
-  // const dispatch=useDispatch();
   const navigateTo=useNavigate();
-  const onFinish = (values:any) => {
-    apiFun.login(values).then((res:any)=>{
+  const onFinish = (values: {username: string,password: string}) => {
+    apiFun.login(values).then((res: MessageType)=>{
       if(res.code==='0000') {
-        localStorage.setItem("admin_token",res.data);
+        localStorage.setItem("admin_token",res.data as string);
         message.success(res.msg);
-        // 派发事件
-        // dispatch(change());
         localStorage.setItem("login_time",timestampToTime(Date.now(),true));
         navigateTo("/main/home");
       }else if(res.code==='5000') {
@@ -28,12 +26,12 @@ const Login: React.FC = () => {
       }
     })
   };
-  const onFinishFailed = (errorInfo:any) => {
-      console.log('Failed:', errorInfo);
-      alert("登录失败，请稍后再试");
+  const onFinishFailed = (errorInfo:any): void => {
+    console.log('Failed:', errorInfo);
+    alert("登录失败，请稍后再试");
   };
   useEffect(() => {
-    const particlesContainer = document.createElement("div");
+    const particlesContainer: HTMLDivElement = document.createElement("div");
     particlesContainer.id = "particles-container";
     document.body.appendChild(particlesContainer);
     // 背景
@@ -118,65 +116,65 @@ const Login: React.FC = () => {
     <div className='box'>
       <div id="tsparticles"></div>
       <Card
-          title="Login Here"
-          className='card1'
-          style={{
-              width: 400,
-          }}
+        title="Login Here"
+        className='card1'
+        style={{
+          width: 400,
+        }}
       >
-          <Form
-              name="basic"
-              labelCol={{
-                  span: 8,
-              }}
-              wrapperCol={{
-                  span: 16,
-              }}
-              style={{
-                  maxWidth: 600,
-              }}
-              initialValues={{
-                  remember: true,
-              }}
-              onFinish={onFinish}
-              onFinishFailed={onFinishFailed}
-              autoComplete="off"
-          >
-              <Form.Item
-                  label="Username"
-                  name="username"
-                  rules={[
-                      {
-                      required: true,
-                      message: 'Please input your username!',
-                      },
-                  ]}
-              >
-                  <Input className='input' />
-              </Form.Item>
-              <Form.Item
-                  label="Password"
-                  name="password"
-                  rules={[
-                      {
-                      required: true,
-                      message: 'Please input your password!',
-                      },
-                  ]}
-                  >
-                  <Input.Password className='input' />
-              </Form.Item>
-              <Form.Item
-                  wrapperCol={{
-                      offset: 8,
-                      span: 16,
-                  }}
-                  >
-                  <Button className='btn' type="primary" htmlType="submit">
-                      登录
-                  </Button>
-              </Form.Item>
-          </Form>
+        <Form
+          name="basic"
+          labelCol={{
+            span: 8,
+          }}
+          wrapperCol={{
+            span: 16,
+          }}
+          style={{
+            maxWidth: 600,
+          }}
+          initialValues={{
+            remember: true,
+          }}
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
+          autoComplete="off"
+        >
+          <Form.Item
+            label="Username"
+            name="username"
+            rules={[
+              {
+                required: true,
+                message: 'Please input your username!',
+              },
+            ]}
+            >
+              <Input className='input' />
+          </Form.Item>
+          <Form.Item
+            label="Password"
+            name="password"
+            rules={[
+              {
+                required: true,
+                message: 'Please input your password!',
+              },
+            ]}
+            >
+            <Input.Password className='input' />
+          </Form.Item>
+          <Form.Item
+            wrapperCol={{
+              offset: 8,
+              span: 16,
+            }}
+            >
+            <Button className='btn' type="primary" htmlType="submit">
+              登录
+            </Button>
+          </Form.Item>
+        </Form>
       </Card>
     </div>
   );

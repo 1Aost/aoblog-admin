@@ -129,14 +129,14 @@ const Customer:React.FC=()=>{
     const {
         token: { colorBgContainer },
     } = theme.useToken();
-    const [open, setOpen] = useState(false);
-    const [id, setId] = useState(0);
+    const [open, setOpen] = useState<boolean>(false);
+    const [id, setId] = useState<number>(0);
     const [form]=Form.useForm();
-    const showModal = () => {
+    const showModal = (): void => {
         form.resetFields();
         setOpen(true);
     };
-    const handleCancel = () => {
+    const handleCancel = (): void => {
         console.log('Clicked cancel button');
         setOpen(false);
     };
@@ -144,7 +144,7 @@ const Customer:React.FC=()=>{
         fetchData();
     },[]);
     // 获取数据的函数
-    function fetchData() {
+    function fetchData(): void {
         apiFun.getReviews().then((res:any) => {
             const newData = res.data.map((item, index) => ({
                 ...item,
@@ -173,25 +173,9 @@ const Customer:React.FC=()=>{
         })
     };
 
-    const onFinishFailed = (errorInfo: any) => {
+    const onFinishFailed = (errorInfo: any): void => {
         console.log('Failed:', errorInfo);
     };
-    // 删除
-    /* function handleDelete(record:any) {
-        return ()=>{
-            console.log(record);
-            apiFun.deleteReviews({id:record.id}).then((res)=>{
-                console.log(res);
-                if(res.code==='0000') {
-                    message.success(res.msg);
-                    // 删除成功后重新获取数据
-                    fetchData();
-                }else {
-                    message.error(res.msg);
-                }
-            })
-        }
-    } */
     return (
         <div
             style={{

@@ -3,25 +3,47 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { Dropdown, Space, Avatar, message } from 'antd';
 import apiFun from '../../api';
 import "./index.css"
-
+interface MessageType {
+  code: string
+  msg:string
+  data: null | Array<AdminType>
+}
+interface AdminType {
+  admin_password: string
+  admin_type: string
+  admin_username: string
+  avatar: string
+  id: number
+}
 const MyHeader:React.FC=()=>{
   const navigate=useNavigate();
-  const [admin,setAdmin]=useState<any>({});
+  const [admin,setAdmin]=useState<AdminType>({
+    admin_password: "",
+    admin_type: "",
+    admin_username: "",
+    avatar: "",
+    id: 0
+  });
   useEffect(()=>{
     // 根据token获取用户信息
-    let admin_token=localStorage.getItem("admin_token")
-    apiFun.getAdminByToken({admin_token}).then((res:any)=>{
+    let admin_token=localStorage.getItem("admin_token");
+    (async function() {
+      try {
+        const res: MessageType=await apiFun.getAdminByToken({admin_token});
         if(res.code==='0000') {
-          setAdmin(res.data[0]);
+          setAdmin((res.data as Array<AdminType>)[0]);
         }else if(res.code==='1111') {
           message.error(res.msg);
           navigate("/login")
         }else {
           message.error(res.msg);
         }
-    })
+      }catch(err) {
+        message.error("出错了，请稍后重试");
+      }
+    })();
   },[]);
-  function handleLogout() {
+  function handleLogout(): void {
     message.success("成功退出");
     localStorage.removeItem("admin_token");
     localStorage.removeItem("login_time");

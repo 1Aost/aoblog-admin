@@ -1,20 +1,28 @@
-import React, { useEffect, useState } from 'react'
+import React, { ChangeEvent, useEffect, useState } from 'react'
 import { Form, Input } from 'antd';
 import { Space, Button, Modal, Table, message } from 'antd'
 import { PlusOutlined } from "@ant-design/icons"
 import type { ColumnsType } from 'antd/es/table';
 import apiFun from '../../api';
-
+interface MessageType {
+    code: string
+    msg:string
+    data: null | Array<MyType>
+}
 interface DataType {
     id: number;
     type: string
 }
+interface MyType {
+    id: number
+    type: string
+}
 const ArticlesType:React.FC=()=>{
     const [form]=Form.useForm();
-    const [open, setOpen] = useState(false);
-    const [ids, setIds] = useState(0);
-    const [type,setType]=useState<any[]>([]);
-    const [subtype,setSubType]=useState<any>(0);
+    const [open, setOpen] = useState<boolean>(false);
+    const [ids, setIds] = useState<number>(0);
+    const [type,setType]=useState<MyType[]>([]);
+    const [subtype,setSubType]=useState<number>(0);
     const columns: ColumnsType<DataType> = [
         {
             title: 'Id',
@@ -40,12 +48,12 @@ const ArticlesType:React.FC=()=>{
         },
     ];
     // Modal对话框的展示
-    const showModal = () => {
+    const showModal = (): void => {
         form.resetFields();
         setOpen(true);
     };
     // 关闭对话框
-    const handleCancel = () => {
+    const handleCancel = (): void => {
         setOpen(false);
     };
     useEffect(()=>{
@@ -54,17 +62,24 @@ const ArticlesType:React.FC=()=>{
     // 获取数据的函数
     function fetchData() {
         // 获取所有的类型
-        apiFun.getAllTypes().then((res:any)=>{
-            if(res.code==="0000") {
-                const typeData=res.data.map((item:any)=>item)
-                setType(typeData);
+        (async function() {
+            try {
+                const res: MessageType=await apiFun.getAllTypes();
+                if(res.code==="0000") {
+                    const typeData: MyType[]=(res.data as Array<MyType>).map((item: MyType)=>item)
+                    setType(typeData);
+                }else {
+                    message.error(res.msg);
+                }
+            }catch(err) {
+                message.error("出错了，请稍后重试");
             }
-        })
+        })()
     }
     // 删除
-    function handleDelete(e:any,record:any) {
+    function handleDelete(e: any,record: DataType) {
         e.preventDefault();
-        apiFun.deleteType({id:record.id}).then((res:any)=>{
+        apiFun.deleteType({id:record.id}).then((res: MessageType)=>{
             if(res.code==='0000') {
                 message.success(res.msg);
                 // 删除成功后重新获取数据
@@ -75,21 +90,21 @@ const ArticlesType:React.FC=()=>{
         })
     }
     // 修改
-    function handleChange(e:any,record:any) {
+    function handleChange(e: any,record: DataType) {
         e.preventDefault();
         setSubType(2);
         showModal();
         setIds(record.id);
     }
     // 新增
-    function handleAdd() {
+    function handleAdd(): void {
         setSubType(1);
         showModal();
     }
     // 新增和修改的回调函数
-    const onFinish = (values: any) => {
+    const onFinish = (values: {type: string}): void => {
         if(subtype===1) {
-            apiFun.addType({...values}).then((res:any)=>{
+            apiFun.addType({...values}).then((res: MessageType)=>{
                 if(res.code==='0000') {
                     message.success(res.msg);
                     setOpen(false);
@@ -99,7 +114,7 @@ const ArticlesType:React.FC=()=>{
                 }
             })
         }else if(subtype===2) {
-            apiFun.changeType({id:ids,...values}).then((res:any)=>{
+            apiFun.changeType({id:ids,...values}).then((res: MessageType)=>{
                 if(res.code==='0000') {
                     message.success(res.msg);
                     setOpen(false);
@@ -110,7 +125,7 @@ const ArticlesType:React.FC=()=>{
             })
         }
     };
-    const onFinishFailed = (errorInfo: any) => {
+    const onFinishFailed = (errorInfo: any): void => {
         console.log('Failed:', errorInfo);
     };
     return (

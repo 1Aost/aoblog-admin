@@ -4,10 +4,51 @@ import { ColumnsType } from 'antd/es/table';
 import { CheckCircleOutlined, CloseCircleOutlined  } from '@ant-design/icons';
 import {timestampToTime} from "../../api/utils"
 import apiFun from '../../api';
+interface MessageType {
+    code: string // 返回的状态码
+    msg: string // 提示信息
+    data: null | Array<ArticleType> | Array<CommentType>
+}
 interface DataType {
     key:string,
     id: number;
     username: string;
+}
+interface MyType {
+    id: number
+    key:string
+    username: string
+    article_id: number
+    comments: string
+    comments_id: number
+    comments_reply: string
+    comments_status: number
+    comments_time: string
+    user_id: number
+    user_name: string
+}
+interface ArticleType {
+    id: number
+    article_url: string
+    article_img: string
+    article_type: string
+    article_likes: number
+    article_views: number
+    article_reviews: number
+    article_title: string
+    article_introduction: string
+    article_time: string
+    comments_length: number
+}
+interface CommentType {
+    article_id: number
+    comments: string
+    comments_id: number
+    comments_reply: string
+    comments_status: number
+    comments_time: string
+    user_id: number
+    user_name: string
 }
 const {TextArea}=Input;
 const Reviews:React.FC=()=>{
@@ -84,21 +125,21 @@ const Reviews:React.FC=()=>{
         },
     ];
     const [comments,setComments]=useState<any>([]);
-    const [id,setId]=useState<any>(0);
-    const [commentsid,setCommentsId]=useState<any>(0);
-    const [article,setArticle]=useState<any>([]);
-    const [loading, setLoading] = useState(true); // Loading state
-    const [open, setOpen] = useState(false);
+    const [id,setId]=useState<number>(0);
+    const [commentsid,setCommentsId]=useState<number>(0);
+    const [article,setArticle]=useState<string[]>([]);
+    const [loading, setLoading] = useState<boolean>(true); // Loading state
+    const [open, setOpen] = useState<boolean>(false);
     const [form]=Form.useForm();
-    const showModal = () => {
+    const showModal = (): void => {
         form.resetFields();
         setOpen(true);
     };
-    const handleCancel = () => {
+    const handleCancel = (): void => {
         console.log('Clicked cancel button');
         setOpen(false);
     };
-    const [arrow] = useState('Show');
+    const [arrow] = useState<string>('Show');
     const mergedArrow = useMemo(() => {
         if (arrow === 'Hide') {
             return false;
@@ -112,9 +153,9 @@ const Reviews:React.FC=()=>{
     }, [arrow]);
 
     // 修改状态
-    function handleStatus(status:number,id:number) {
+    function handleStatus(status:number,id:number): ()=> void {
         return ()=>{
-            apiFun.changeCommentsStatus({id,comments_status:status}).then((res:any)=>{
+            apiFun.changeCommentsStatus({id,comments_status:status}).then((res: MessageType)=>{
                 if(res.code==='0000') {
                     message.success(res.msg);
                     // 更新 data 数据
@@ -134,20 +175,20 @@ const Reviews:React.FC=()=>{
         }
     }
     // 根据文章名称获取文章的id
-    function fetchId(name:string) {
-        apiFun.getIdByName({name}).then((res:any) => {
+    function fetchId(name:string): void {
+        apiFun.getIdByName({name}).then((res: MessageType) => {
             if(res.code==='0000') {
                 message.success(res.msg);
-                setId(res.data[0].id)
+                setId((res.data as Array<ArticleType>)[0].id)
             }else {
                 message.error(res.msg);
             }
         });
     }
     // 获取评论数据
-    function fetchData() {
-        apiFun.getComments({id}).then((res:any)=>{
-            setComments(res.data)
+    function fetchData(): void {
+        apiFun.getComments({id}).then((res: MessageType)=>{
+            setComments(res.data as Array<CommentType>);
         })
     }
     // 获取指定文章的所有评论信息
@@ -156,37 +197,22 @@ const Reviews:React.FC=()=>{
     },[id])
     // 获取所有文章名称
     useEffect(() => {
-        apiFun.getAllArticles().then((res: any) => {
+        apiFun.getAllArticles().then((res: MessageType) => {
             if (res.code === '0000') {
-                const articleData = res.data.map((item: any) => item.article_title);
+                const articleData: string[] = (res.data as Array<ArticleType>).map((item: ArticleType) => item.article_title);
                 setArticle(articleData);
                 setLoading(false);
             }
         });
     }, []);
-    // 删除
-    /* function handleDelete(record:any) {
-        return ()=>{
-            apiFun.deleteComments({comments_id:record.comments_id}).then((res:any)=>{
-                console.log(res);
-                if(res.code==='0000') {
-                    message.success(res.msg);
-                    // 删除成功后重新获取数据
-                    fetchData();
-                }else {
-                    message.error(res.msg);
-                }
-            })
-        }
-    } */
     // 回复
-    function handleReply(e:any,record:any) {
+    function handleReply(e:any,record: any) {
         e.preventDefault();
         showModal();
         setCommentsId(record.comments_id);
     }
-    const onFinish = (values: any) => {
-        apiFun.replyComments({...values,comments_id:commentsid}).then((res:any)=>{
+    const onFinish = (values: {reply: string}): void => {
+        apiFun.replyComments({...values,comments_id:commentsid}).then((res: MessageType)=>{
             if(res.code==='0000') {
                 message.success(res.msg);
                 setOpen(false);
@@ -198,10 +224,10 @@ const Reviews:React.FC=()=>{
         })
     };
 
-    const onFinishFailed = (errorInfo: any) => {
+    const onFinishFailed = (errorInfo: any): void => {
         console.log('Failed:', errorInfo);
     };
-    const onChange = (value: string) => {
+    const onChange = (value: string): void => {
         // console.log(`selected ${value}`);
         fetchId(value);
     };

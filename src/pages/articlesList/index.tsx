@@ -5,7 +5,11 @@ import { LoadingOutlined, PlusOutlined } from "@ant-design/icons"
 import type { ColumnsType } from 'antd/es/table';
 import apiFun from '../../api';
 import {timestampToTime} from "../../api/utils"
-
+interface MessageType {
+    code: string
+    msg:string
+    data: null | Array<ArticleType> | Array<MyType>
+}
 interface DataType {
     key:string,
     id: number;
@@ -19,15 +23,36 @@ interface DataType {
     article_introduction: string;
     article_time: string;
 }
+interface ArticleType {
+    id: number
+    article_url: string
+    article_img: string
+    article_type: string
+    article_likes: number
+    article_views: number
+    article_reviews: number
+    article_title: string
+    article_introduction: string
+    article_time: string
+    comments_length: number
+}
+interface ChangeType {
+    article_introduction: string
+    article_title: string
+    article_type: string
+}
+interface MyType {
+    id: number
+    type: string
+}
 const { Option } = Select;
 const {TextArea} =Input;
 const ArticlesList:React.FC=()=>{
     const [form]=Form.useForm();
     const [data,setData]=useState<DataType[]>([]);
-    const [open, setOpen] = useState(false);
-    const [ids, setIds] = useState(0);
-    const [type,setType]=useState<any[]>([]);
-    const [subtype,setSubtype]=useState<any>('');
+    const [open, setOpen] = useState<boolean>(false);
+    const [ids, setIds] = useState<number>(0);
+    const [type,setType]=useState<string[]>([]);
     const columns: ColumnsType<DataType> = [
         {
             title: 'Id',
@@ -98,47 +123,57 @@ const ArticlesList:React.FC=()=>{
         },
     ];
     // 修改中type的选择
-    const onTypeChange = (value: string) => {
-        setSubtype(value);
+    const onTypeChange: (value: string) => void = (value: string): void => {
+        // setSubtype(value);
     };
     // Modal对话框的展示
-    const showModal = () => {
+    const showModal: ()=> void = (): void => {
         form.resetFields();
         setOpen(true);
     };
     // 关闭对话框
-    const handleCancel = () => {
+    const handleCancel: ()=> void = (): void => {
         setOpen(false);
     };
     useEffect(()=>{
         fetchData();
-        let typeData:any[]=[];
+        let typeData: string[]=[];
         // 获取所有的类型
-        apiFun.getAllTypes().then((res:any)=>{
-            if(res.code==="0000") {
-                res.data.map((item:any)=>{
-                    return typeData.push(item.type);
-                })
+        (async function() {
+            try {
+                const res: MessageType=await apiFun.getAllTypes();
+                if(res.code==="0000") {
+                    (res.data as Array<MyType>).map((item: MyType)=>{
+                        return typeData.push(item.type);
+                    })
+                }else {
+                    message.error(res.msg);
+                }
+                setType(typeData);
+            }catch(err) {
+                message.error("出错了，请稍后重试");
             }
-        })
-        setType(typeData);
+        })()
     },[]);
     // 获取数据的函数
-    function fetchData() {
-        apiFun.getAllArticles().then((res:any) => {
-            const newData = res.data.map((item, index) => ({
+    async function fetchData() {
+        try {
+            const res: MessageType=await apiFun.getAllArticles();
+            const newData = (res.data as Array<ArticleType>).map((item: ArticleType, index) => ({
                 ...item,
-                review_time:timestampToTime(item.review_time,true),
+                // review_time:timestampToTime(item.review_time,true),
                 article_time:timestampToTime(item.article_time,true),
                 key: (index + 1).toString(),
             }));
             setData(newData);
-        });
+        }catch(err) {
+            message.error("出错了，请联系管理员");
+        }
     }
     // 删除
-    function handleDelete(record:any) {
+    function handleDelete(record: DataType): ()=> void {
         return ()=>{
-            apiFun.deleteArticle({id:record.id}).then((res:any)=>{
+            apiFun.deleteArticle({id:record.id}).then((res: MessageType)=>{
                 if(res.code==='0000') {
                     message.success(res.msg);
                     // 删除成功后重新获取数据
@@ -150,7 +185,7 @@ const ArticlesList:React.FC=()=>{
         }
     }
     // 修改
-    function handleChange(record:any) {
+    function handleChange(record: DataType): () => void {
         return ()=>{
             showModal();
             setIds(record.id);
@@ -158,8 +193,8 @@ const ArticlesList:React.FC=()=>{
         }
     }
     // 修改的函数
-    const onFinish = (values: any) => {
-        apiFun.changeArticle({id:ids,...values,article_img:imageUrl}).then((res:any)=>{
+    const onFinish = (values: ChangeType): void => {
+        apiFun.changeArticle({id:ids,...values,article_img:imageUrl}).then((res: MessageType)=>{
             if(res.code==='0000') {
                 message.success(res.msg);
                 setOpen(false);
@@ -170,7 +205,7 @@ const ArticlesList:React.FC=()=>{
             }
         })
     };
-    const onFinishFailed = (errorInfo: any) => {
+    const onFinishFailed = (errorInfo: any): void => {
         console.log('Failed:', errorInfo);
     };
     /**
@@ -179,17 +214,17 @@ const ArticlesList:React.FC=()=>{
     // 图片地址
     const [imageUrl, setImageUrl] = useState<string>();
     // 加载
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState<boolean>(false);
     // 上传前
-    const beforeUpload = (file: { type: string; size: number; }) => {
+    const beforeUpload = (file: { type: string; size: number; }): boolean => {
         // 图片格式
         const isJpgOrPng = file.type === 'image/jpg' || file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/webp';
         if (!isJpgOrPng) {
-        message.error('You can only upload JPG/JPEG/PNG/WEBP file!');
+            message.error('You can only upload JPG/JPEG/PNG/WEBP file!');
         }
         const isLt2M = file.size / 1024 / 1024 < 2;
         if (!isLt2M) {
-        message.error('Image must smaller than 2MB!');
+            message.error('Image must smaller than 2MB!');
         }
         return isJpgOrPng && isLt2M;
     };

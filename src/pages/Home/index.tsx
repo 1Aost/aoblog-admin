@@ -19,6 +19,36 @@ import {
 // import { useSelector, useDispatch } from 'react-redux';
 import apiFun from '../../api';
 import "./index.css"
+interface MessageType {
+    code: string
+    msg:string
+    data: null | Array<ArticleType> | Array<AdminType>
+}
+interface ArticleType {
+    id: number
+    article_url: string
+    article_img: string
+    article_type: string
+    article_likes: number
+    article_views: number
+    article_reviews: number
+    article_title: string
+    article_introduction: string
+    article_time: string
+    comments_length: number
+}
+interface NewArticleType {
+    name: string
+    article_likes: number
+    article_views: number
+}
+interface AdminType {
+    admin_password: string
+    admin_type: string
+    admin_username: string
+    avatar: string
+    id: number
+}
 const renderCustomizedLabel = (props: any) => {
     const { x, y, width, value } = props;
     const radius = 10; 
@@ -38,8 +68,6 @@ const renderCustomizedLabel = (props: any) => {
     );
 };
 const Home:React.FC=()=>{
-    // const {time}=useSelector((store:any)=>store.user);
-    // console.log(time);
     let time=localStorage.getItem("login_time");
     const {
         token: { colorBgContainer },
@@ -56,32 +84,42 @@ const Home:React.FC=()=>{
             setData01(newData);
         })
     },[])
-    const [data, setData] = useState<any[]>([]);
+    const [data, setData] = useState<NewArticleType[]>([]);
     useEffect(()=>{
-        apiFun.getAllArticles().then((res:any)=>{
-            const newData = res.data.map((item: any) => ({
-                name: item.article_title,
-                article_likes: item.article_likes,
-                article_views: item.article_views
-            }));
-            setData(newData);
-        })
+        (async function() {
+            try {
+                const res: MessageType=await apiFun.getAllArticles()
+                const newData: NewArticleType[] = (res.data as Array<ArticleType>).map((item: ArticleType) => ({
+                    name: item.article_title,
+                    article_likes: item.article_likes,
+                    article_views: item.article_views
+                }));
+                setData(newData);
+            }catch(err) {
+                message.error("出错了，请稍后重试");
+            }
+        })()
     },[])
     // 根据token获取用户信息
     useEffect(()=>{
-        let admin_token=localStorage.getItem("admin_token")
-        apiFun.getAdminByToken({admin_token}).then((res:any)=>{
-            if(res.code==='0000') {
-              setAdmin(res.data[0]);
-            }else if(res.code==='1111') {
-                message.error(res.msg);
-                navigate("/login")
-            }else {
-              message.error(res.msg);
+        let admin_token=localStorage.getItem("admin_token");
+        (async function() {
+            try {
+                const res: MessageType=await apiFun.getAdminByToken({admin_token});
+                if(res.code==='0000') {
+                    setAdmin((res.data as Array<AdminType>)[0]);
+                }else if(res.code==='1111') {
+                    message.error(res.msg);
+                    navigate("/login")
+                }else {
+                    message.error(res.msg);
+                }
+            }catch(err) {
+                message.error("出错了，请稍后重试");
             }
-        })
+        })()
     },[]);
-    const plugins:any = [
+    const plugins: any = [
         'MapType',
         'Scale',
         'OverView',

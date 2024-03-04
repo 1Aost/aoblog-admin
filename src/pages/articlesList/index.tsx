@@ -5,6 +5,7 @@ import { LoadingOutlined, PlusOutlined } from "@ant-design/icons"
 import type { ColumnsType } from 'antd/es/table';
 import apiFun from '../../api';
 import {timestampToTime} from "../../api/utils"
+import ActionRender from '../../components-antd/Display/ActionRender';
 interface MessageType {
     code: string
     msg:string
@@ -115,10 +116,10 @@ const ArticlesList:React.FC=()=>{
             key: 'action',
             fixed: 'right',
             render: (_, record) => (
-                <Space size="middle">
-                    <a onClick={handleChange(record)}>修改</a>
-                    <a onClick={handleDelete(record)}>删除</a>
-                </Space>
+                <ActionRender
+                    onEdit={handleChange(record)}
+                    onDelete={handleDelete(record)}
+                />
             ),
         },
     ];

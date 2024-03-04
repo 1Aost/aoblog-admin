@@ -5,6 +5,7 @@ import type { ColumnsType } from 'antd/es/table';
 
 import apiFun from '../../api';
 import {timestampToTime} from "../../api/utils"
+import ActionRender from '../../components-antd/Display/ActionRender';
 interface DataType {
     key:string,
     id: number;
@@ -118,10 +119,18 @@ const Customer:React.FC=()=>{
             key: 'action',
             fixed: 'right',
             render: (_, record) => (
-                <Space size="middle">
-                    <a href="###" onClick={(e)=>handleReply(e,record)}>回复</a>
-                    {/* <a onClick={handleDelete(record)}>删除</a> */}
-                </Space>
+                <ActionRender
+                    extra={
+                        <Button
+                            type="link"
+                            onClick={(e) => {
+                                handleReply(e,record)
+                            }}
+                        >
+                            回复
+                        </Button>
+                    }
+                />
             ),
         },
     ];

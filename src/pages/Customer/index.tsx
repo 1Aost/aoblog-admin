@@ -6,6 +6,7 @@ import { PlusOutlined, LoadingOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import "./index.css"
 import apiFun from '../../api';
+import ActionRender from '../../components-antd/Display/ActionRender';
 interface MessageType {
     code: string
     msg: string
@@ -49,10 +50,9 @@ const Customer:React.FC=()=>{
             title: 'Action',
             key: 'action',
             render: (_, record) => (
-            <Space size="middle">
-                {/* <a>修改</a> */}
-                <a onClick={handleDelete(record)}>删除</a>
-            </Space>
+                <ActionRender
+                    onDelete={handleDelete(record)}
+                />
             ),
         },
     ];

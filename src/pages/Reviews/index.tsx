@@ -4,6 +4,7 @@ import { ColumnsType } from 'antd/es/table';
 import { CheckCircleOutlined, CloseCircleOutlined  } from '@ant-design/icons';
 import {timestampToTime} from "../../api/utils"
 import apiFun from '../../api';
+import ActionRender from '../../components-antd/Display/ActionRender';
 interface MessageType {
     code: string // 返回的状态码
     msg: string // 提示信息
@@ -117,10 +118,18 @@ const Reviews:React.FC=()=>{
             key: 'action',
             fixed: 'right',
             render: (_, record) => (
-            <Space size="middle">
-                <a href='reply' onClick={(e)=>handleReply(e,record)}>回复</a>
-                {/* <a onClick={handleDelete(record)}>删除</a> */}
-            </Space>
+                <ActionRender
+                    extra={
+                        <Button
+                            type="link"
+                            onClick={(e) => {
+                                handleReply(e,record)
+                            }}
+                        >
+                            回复
+                        </Button>
+                    }
+                />
             ),
         },
     ];

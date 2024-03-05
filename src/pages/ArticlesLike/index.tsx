@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { message, Select, Table, Tag } from 'antd';
+import { message, Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import apiFun from '../../api';
+import FilterSelect from '../../components-antd/Header/FilterSelect';
 interface MessageType {
     code: string
     msg:string
@@ -110,13 +111,11 @@ const ArticlesLike:React.FC=()=>{
             {loading ? (
                 <div>Loading...</div>
             ) : (
-                <Select
-                    key={1}
-                    showSearch
+                <FilterSelect
                     placeholder="选择文章"
-                    optionFilterProp="children"
+                    style={{ width: "200px" }}
+                    options={article.map((title) => ({ label: title, value: title }))}
                     onChange={onChange}
-                    options={article.map((title) => ({ value: title }))}
                 />
             )}
             {

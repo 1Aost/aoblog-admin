@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { Button, Form, Input, message, Modal, Select, Space, Table, Tag, Tooltip } from 'antd';
+import { Button, Form, Input, message, Modal, Space, Table, Tag, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { CheckCircleOutlined, CloseCircleOutlined  } from '@ant-design/icons';
 import {timestampToTime} from "../../api/utils"
 import apiFun from '../../api';
 import ActionRender from '../../components-antd/Display/ActionRender';
+import FilterSelect from '../../components-antd/Header/FilterSelect';
 interface MessageType {
     code: string // 返回的状态码
     msg: string // 提示信息
@@ -237,7 +238,6 @@ const Reviews:React.FC=()=>{
         console.log('Failed:', errorInfo);
     };
     const onChange = (value: string): void => {
-        // console.log(`selected ${value}`);
         fetchId(value);
     };
     return (
@@ -245,13 +245,11 @@ const Reviews:React.FC=()=>{
             {loading ? (
                 <div key={0}>Loading...</div>
             ) : (
-                <Select
-                    key={1}
-                    showSearch
+                <FilterSelect
                     placeholder="选择文章"
-                    optionFilterProp="children"
+                    style={{ width: "200px" }}
+                    options={article.map((title) => ({ label: title, value: title }))}
                     onChange={onChange}
-                    options={article.map((title) => ({ value: title }))}
                 />
             )}
             {

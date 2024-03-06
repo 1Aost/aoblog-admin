@@ -9,6 +9,7 @@ import { Form } from 'antd';
 import { Tag,Input,Button,Drawer,Upload,message } from 'antd';
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons"
 import apiFun from '../../api';
+import HeaderGroup from '../../components-antd/Header/HeaderGroup';
 /**
  *  组件外声明只加载一次
  * */
@@ -153,11 +154,13 @@ const NewArticles:React.FC=()=>{
   return (
     <>
       <div className="header">
-        <div className="btn_con">
-          <Button type="primary" onClick={showDrawer}>
-            发布
-          </Button>
-        </div>
+        <HeaderGroup
+          extra={
+            <Button type="primary" onClick={showDrawer}>
+              发布
+            </Button>
+          }
+        />
       </div>
       <MdEditor 
         style={{ height: '500px' }} 

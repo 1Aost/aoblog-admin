@@ -7,6 +7,7 @@ import type { ColumnsType } from 'antd/es/table';
 import "./index.css"
 import apiFun from '../../api';
 import ActionRender from '../../components-antd/Display/ActionRender';
+import HeaderGroup from '../../components-antd/Header/HeaderGroup';
 interface MessageType {
     code: string
     msg: string
@@ -178,9 +179,11 @@ const Customer:React.FC=()=>{
                 minHeight: 624,
             }}
         >
-            <Button className='btn' onClick={handleAdd} type="primary" icon={<PlusOutlined />}>
-                新增
-            </Button>
+            <HeaderGroup>
+                <Button className='btn' onClick={handleAdd} type="primary" icon={<PlusOutlined />}>
+                    新增
+                </Button>
+            </HeaderGroup>
             <Modal
                 title="新增用户"
                 open={open}

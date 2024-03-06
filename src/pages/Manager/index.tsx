@@ -8,6 +8,7 @@ import "./index.css"
 import apiFun from '../../api';
 import { useNavigate } from 'react-router-dom';
 import ActionRender from '../../components-antd/Display/ActionRender';
+import HeaderGroup from '../../components-antd/Header/HeaderGroup';
 interface MessageType {
     code: string // 返回的状态码
     msg: string // 提示信息
@@ -249,9 +250,11 @@ const Manager:React.FC=()=>{
                 status==='超级管理员'?
                 (
                     <div>
-                        <Button className='btn' onClick={handleAdd} type="primary" icon={<PlusOutlined />}>
-                            新增
-                        </Button>
+                        <HeaderGroup>
+                            <Button className='btn' onClick={handleAdd} type="primary" icon={<PlusOutlined />}>
+                                新增
+                            </Button>
+                        </HeaderGroup>
                         <Modal
                             title={type===1?"新增管理员":"修改管理员"}
                             open={open}

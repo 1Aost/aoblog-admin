@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Dropdown, Space, Avatar, message } from 'antd';
-import apiFun from '../../api';
+import apiFun from '@/api';
 import "./index.css"
+
 interface MessageType {
   code: string
   msg:string

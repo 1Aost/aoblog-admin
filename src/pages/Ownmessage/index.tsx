@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Form, Input, message, Modal, Tag, Upload } from 'antd';
 import { EditOutlined, LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import layout from 'antd/es/layout';
-import apiFun from '../../api';
+import apiFun from '@/api';
 import "./index.css"
+
 interface MessageType {
   code: string
   msg:string

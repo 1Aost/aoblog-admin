@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { message, Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import apiFun from '../../api';
-import FilterSelect from '../../components-antd/Header/FilterSelect';
+import apiFun from '@/api';
+import FilterSelect from '@/components-antd/Header/FilterSelect';
 interface MessageType {
     code: string
     msg:string

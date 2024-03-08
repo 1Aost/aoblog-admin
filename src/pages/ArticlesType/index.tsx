@@ -1,11 +1,11 @@
-import React, { ChangeEvent, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Form, Input } from 'antd';
-import { Space, Button, Modal, Table, message } from 'antd'
+import { Button, Modal, Table, message } from 'antd'
 import { PlusOutlined } from "@ant-design/icons"
 import type { ColumnsType } from 'antd/es/table';
-import apiFun from '../../api';
-import ActionRender from '../../components-antd/Display/ActionRender';
-import HeaderGroup from '../../components-antd/Header/HeaderGroup';
+import apiFun from '@/api';
+import ActionRender from '@/components-antd/Display/ActionRender';
+import HeaderGroup from '@/components-antd/Header/HeaderGroup';
 interface MessageType {
     code: string
     msg:string

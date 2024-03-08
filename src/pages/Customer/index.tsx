@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { Form, Input, Upload } from 'antd';
-
-import { Space,Button, Modal, Table, message } from 'antd'
+import { Form, Input, Upload, Button, Modal, Table, message } from 'antd';
 import { PlusOutlined, LoadingOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
+import apiFun from '@/api';
+import ActionRender from '@/components-antd/Display/ActionRender';
+import HeaderGroup from '@/components-antd/Header/HeaderGroup';
 import "./index.css"
-import apiFun from '../../api';
-import ActionRender from '../../components-antd/Display/ActionRender';
-import HeaderGroup from '../../components-antd/Header/HeaderGroup';
+
 interface MessageType {
     code: string
     msg: string

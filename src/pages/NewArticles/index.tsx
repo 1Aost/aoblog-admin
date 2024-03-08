@@ -8,8 +8,8 @@ import "./index.css"
 import { Form } from 'antd';
 import { Tag,Input,Button,Drawer,Upload,message } from 'antd';
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons"
-import apiFun from '../../api';
-import HeaderGroup from '../../components-antd/Header/HeaderGroup';
+import apiFun from '@/api';
+import HeaderGroup from '@/components-antd/Header/HeaderGroup';
 /**
  *  组件外声明只加载一次
  * */

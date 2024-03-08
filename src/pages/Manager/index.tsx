@@ -5,10 +5,10 @@ import { Space,Button, Modal,Table, message } from 'antd'
 import { PlusOutlined, LoadingOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import "./index.css"
-import apiFun from '../../api';
+import apiFun from '@/api';
 import { useNavigate } from 'react-router-dom';
-import ActionRender from '../../components-antd/Display/ActionRender';
-import HeaderGroup from '../../components-antd/Header/HeaderGroup';
+import ActionRender from '@/components-antd/Display/ActionRender';
+import HeaderGroup from '@/components-antd/Header/HeaderGroup';
 interface MessageType {
     code: string // 返回的状态码
     msg: string // 提示信息

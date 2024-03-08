@@ -2,10 +2,10 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { Button, Form, Input, message, Modal, Space, Table, Tag, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { CheckCircleOutlined, CloseCircleOutlined  } from '@ant-design/icons';
-import {timestampToTime} from "../../api/utils"
-import apiFun from '../../api';
-import ActionRender from '../../components-antd/Display/ActionRender';
-import FilterSelect from '../../components-antd/Header/FilterSelect';
+import {timestampToTime} from "@/api/utils"
+import apiFun from '@/api';
+import ActionRender from '@/components-antd/Display/ActionRender';
+import FilterSelect from '@/components-antd/Header/FilterSelect';
 interface MessageType {
     code: string // 返回的状态码
     msg: string // 提示信息

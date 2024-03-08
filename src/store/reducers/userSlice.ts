@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit"; 
-import { timestampToTime } from "../../api/utils";
+import { timestampToTime } from "@/api/utils";
 export interface UserState {
     time:string
 }

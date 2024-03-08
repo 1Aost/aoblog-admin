@@ -3,9 +3,9 @@ import { Space, Tooltip, Table, Tag, theme, message, Form, Button, Modal, Input 
 import { CheckCircleOutlined, CloseCircleOutlined  } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 
-import apiFun from '../../api';
-import {timestampToTime} from "../../api/utils"
-import ActionRender from '../../components-antd/Display/ActionRender';
+import apiFun from '@/api';
+import { timestampToTime } from "@/api/utils"
+import ActionRender from '@/components-antd/Display/ActionRender';
 interface DataType {
     key:string,
     id: number;

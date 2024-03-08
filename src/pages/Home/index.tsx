@@ -17,8 +17,9 @@ import {
 } from "recharts";
 // 引入相关Hooks
 // import { useSelector, useDispatch } from 'react-redux';
-import apiFun from '../../api';
+import apiFun from '@/api';
 import "./index.css"
+
 interface MessageType {
     code: string
     msg:string

@@ -2,9 +2,10 @@ import React, { useEffect } from 'react'
 import {useNavigate} from "react-router-dom"
 import { Button, Form, Input,Card, message } from 'antd';
 import {tsParticles} from "tsparticles"
-import apiFun from '../../api';
-import { timestampToTime } from '../../api/utils';
+import apiFun from '@/api';
+import { timestampToTime } from '@/api/utils';
 import "./index.css"
+
 interface MessageType {
   code: string // 返回的状态码
   msg: string // 提示信息

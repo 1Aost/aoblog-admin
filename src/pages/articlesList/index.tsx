@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { Form, Input, Select, Upload } from 'antd';
-import { Space, Button, Modal, Table, message } from 'antd'
+import { Button, Modal, Table, message } from 'antd'
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons"
 import type { ColumnsType } from 'antd/es/table';
-import apiFun from '../../api';
-import {timestampToTime} from "../../api/utils"
-import ActionRender from '../../components-antd/Display/ActionRender';
+import apiFun from '@/api';
+import { timestampToTime } from "@/api/utils"
+import ActionRender from '@/components-antd/Display/ActionRender';
 interface MessageType {
     code: string
     msg:string

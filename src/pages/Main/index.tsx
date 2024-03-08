@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
 import { Breadcrumb, Layout, message, theme } from 'antd';
 import { useNavigate,Outlet, Link, useLocation } from "react-router-dom"
-import MyHeader from "../../components/MyHeader"
-import MySlider from "../../components/MySlider"
+import MyHeader from "@/components/MyHeader"
+import MySlider from "@/components/MySlider"
 const { Header, Content } = Layout;
 const breadcrumbNameMap: Record<string, string> = {
     '/main/home':'Home',
@@ -16,6 +16,7 @@ const breadcrumbNameMap: Record<string, string> = {
     '/main/mine':'Mine',
     '/main/ArticlesLike':'Likes',
 };
+
 const Main:React.FC=()=>{
     useEffect(() => {
         if(!localStorage.getItem("admin_token")) {

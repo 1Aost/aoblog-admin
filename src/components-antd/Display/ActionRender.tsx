@@ -6,9 +6,11 @@ interface Iprops {
     onDelete?: (e?) => void;
     deleteProps?: {tooltip?: string} & ButtonProps;
     extra?: ReactNode;
+    buttons?: ({ title: string; tooltip?: string } & ButtonProps)[];
 }
 const ActionRender = (props: Iprops) => {
-    const { onEdit, editProps, onDelete, deleteProps, extra } = props;
+    const { onEdit, editProps, onDelete, deleteProps, extra, buttons = [] } = props;
+    const buttonStyle = { padding: 0 };
     return (
         <Space>
             {onEdit && (
@@ -25,6 +27,15 @@ const ActionRender = (props: Iprops) => {
                     </Button>
                 </Tooltip>
             )}
+            {buttons?.length > 0 &&
+                buttons?.map((btn, index) => (
+                <Tooltip key={index} title={btn?.tooltip}>
+                    <Button disabled={btn?.disabled} style={buttonStyle} type="text" onClick={btn.onClick}>
+                    {btn?.title}
+                    </Button>
+                </Tooltip>
+            ))}
+
             {onDelete && (
                 <Popconfirm
                     title={`是否确认${deleteProps?.title ?? '删除'}?`}

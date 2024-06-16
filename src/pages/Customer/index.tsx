@@ -2,16 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { Form, Input, Upload, Button, Modal, Table, message } from 'antd';
 import { PlusOutlined, LoadingOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
-import apiFun from '@/api';
 import ActionRender from '@/components-antd/Display/ActionRender';
 import HeaderGroup from '@/components-antd/Header/HeaderGroup';
 import "./index.css"
-
-interface MessageType {
-  code: string
-  msg: string
-  data: null | Array<UserType>
-}
+import { addUser, deleteUser, getAllUsers } from '@/services/Users';
+import { uploadAvatar } from '@/services/Admins';
 interface DataType {
   key: string,
   id: number;
@@ -51,7 +46,7 @@ const Customer: React.FC = () => {
       key: 'action',
       render: (_, record) => (
         <ActionRender
-          onDelete={handleDelete(record)}
+          onDelete={() => handleDelete(record)}
         />
       ),
     },
@@ -73,31 +68,29 @@ const Customer: React.FC = () => {
   }, []);
 
   // 获取数据的函数
-  async function fetchData() {
-    try {
-      const res: MessageType = await apiFun.getAllUsers();
+  const fetchData = () => {
+    getAllUsers().then(res => {
       const newData = (res.data as Array<UserType>).map((item: UserType, index) => ({
         ...item,
         key: (index + 1).toString(),
       }));
       setData(newData);
-    } catch (_err) {
+    }).catch(_err => {
       message.error("出错了，请稍后重试");
-    }
-  }
+    })
+  };
+
   // 删除
-  function handleDelete(record: DataType): () => void {
-    return () => {
-      apiFun.deleteUser({ id: record.id }).then((res: MessageType) => {
-        if (res.code === '6001') {
-          message.error(res.msg);
-        } else {
-          message.success(res.msg);
-          // 删除成功后重新获取数据
-          fetchData();
-        }
-      })
-    }
+  const handleDelete = (record: DataType) => {
+    deleteUser({ id: record.id }).then(res => {
+      if (res.code === '6001') {
+        message.error(res.msg);
+      } else {
+        message.success(res.msg);
+        // 删除成功后重新获取数据
+        fetchData();
+      }
+    })
   }
   /**
    *  上传图片
@@ -140,11 +133,11 @@ const Customer: React.FC = () => {
     }
   };
   // 自定义上传函数
-  const customUpload = async ({ file }) => {
+  const customUpload = ({ file }) => {
     const formData = new FormData();
     formData.append('file', file);
     // console.log(formData);
-    apiFun.uploadAvatar(formData).then((res: any) => {
+    uploadAvatar(formData).then(res => {
       // console.log(res.url);
       setImageUrl("./avatar/" + res.url);
     })
@@ -153,8 +146,8 @@ const Customer: React.FC = () => {
   function handleAdd(): void {
     showModal();
   }
-  const onFinish = (values: { username: string, password: string }): void => {
-    apiFun.addUser({ ...values, avatar: imageUrl }).then((res: MessageType) => {
+  const onFinish = (values: { username: string, password: string }) => {
+    addUser({ ...values, avatar: imageUrl }).then(res => {
       if (res.code === '0000') {
         message.success(res.msg);
         setOpen(false);

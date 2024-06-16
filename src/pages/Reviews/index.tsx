@@ -2,20 +2,15 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { Button, Form, Input, message, Modal, Space, Table, Tag, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import { timestampToTime } from "@/api/utils"
-import apiFun from '@/api';
+import { timestampToTime } from "@/api/utils";
 import ActionRender from '@/components-antd/Display/ActionRender';
 import FilterSelect from '@/components-antd/Header/FilterSelect';
-interface MessageType {
-  code: string // 返回的状态码
-  msg: string // 提示信息
-  data: null | Array<ArticleType> | Array<CommentType>
-}
+import { changeCommentsStatus, getAllArticles, getComments, getIdByName, replyComments } from '@/services/Articles';
 interface DataType {
   key: string,
   id: number;
   username: string;
-}
+};
 interface ArticleType {
   id: number
   article_url: string
@@ -28,7 +23,7 @@ interface ArticleType {
   article_introduction: string
   article_time: string
   comments_length: number
-}
+};
 interface CommentType {
   article_id: number
   comments: string
@@ -38,8 +33,9 @@ interface CommentType {
   comments_time: string
   user_id: number
   user_name: string
-}
+};
 const { TextArea } = Input;
+
 const Reviews: React.FC = () => {
   const columns: ColumnsType<DataType> = [
     {
@@ -74,7 +70,7 @@ const Reviews: React.FC = () => {
           {
             record.comments_status === 0 ?
               (
-                <div onClick={handleStatus(1, record.comments_id)}>
+                <div onClick={() => handleStatus(1, record.comments_id)}>
                   <Tooltip placement="top" title={"点击通过"} arrow={mergedArrow}>
                     <Tag icon={<CloseCircleOutlined />} color="error">
                       未通过
@@ -84,7 +80,7 @@ const Reviews: React.FC = () => {
 
               ) :
               (
-                <div onClick={handleStatus(0, record.comments_id)}>
+                <div onClick={() => handleStatus(0, record.comments_id)}>
                   <Tooltip placement="top" title={"点击关闭"} arrow={mergedArrow}>
                     <Tag icon={<CheckCircleOutlined />} color="success">
                       已通过
@@ -149,30 +145,29 @@ const Reviews: React.FC = () => {
   }, [arrow]);
 
   // 修改状态
-  function handleStatus(status: number, id: number): () => void {
-    return () => {
-      apiFun.changeCommentsStatus({ id, comments_status: status }).then((res: MessageType) => {
-        if (res.code === '0000') {
-          message.success(res.msg);
-          // 更新 data 数据
-          setComments((prevData) =>
-            prevData.map((item) => {
-              if (item.id === id) {
-                return { ...item, review_status: status };
-              }
-              return item;
-            })
-          );
-          fetchData();
-        } else {
-          message.error(res.msg);
-        }
-      })
-    }
+  const handleStatus = (status: number, id: number) => {
+    changeCommentsStatus({ id, comments_status: status }).then(res => {
+      if (res.code === '0000') {
+        message.success(res.msg);
+        // 更新 data 数据
+        setComments((prevData) =>
+          prevData.map((item) => {
+            if (item.id === id) {
+              return { ...item, review_status: status };
+            }
+            return item;
+          })
+        );
+        fetchData();
+      } else {
+        message.error(res.msg);
+      }
+    })
   }
+
   // 根据文章名称获取文章的id
-  function fetchId(name: string): void {
-    apiFun.getIdByName({ name }).then((res: MessageType) => {
+  const fetchId = (name: string) => {
+    getIdByName({ name }).then(res => {
       if (res.code === '0000') {
         message.success(res.msg);
         setId((res.data as Array<ArticleType>)[0].id)
@@ -181,19 +176,22 @@ const Reviews: React.FC = () => {
       }
     });
   }
+
   // 获取评论数据
-  function fetchData(): void {
-    apiFun.getComments({ id }).then((res: MessageType) => {
+  const fetchData = () => {
+    getComments({ id }).then(res => {
       setComments(res.data as Array<CommentType>);
     })
   }
+
   // 获取指定文章的所有评论信息
   useEffect(() => {
     fetchData();
-  }, [id])
+  }, [id]);
+
   // 获取所有文章名称
   useEffect(() => {
-    apiFun.getAllArticles().then((res: MessageType) => {
+    getAllArticles().then(res => {
       if (res.code === '0000') {
         const articleData: string[] = (res.data as Array<ArticleType>).map((item: ArticleType) => item.article_title);
         setArticle(articleData);
@@ -201,14 +199,16 @@ const Reviews: React.FC = () => {
       }
     });
   }, []);
+
   // 回复
-  function handleReply(e: any, record: any) {
+  const handleReply = (e: any, record: any) => {
     e.preventDefault();
     showModal();
     setCommentsId(record.comments_id);
-  }
-  const onFinish = (values: { reply: string }): void => {
-    apiFun.replyComments({ ...values, comments_id: commentsid }).then((res: MessageType) => {
+  };
+
+  const onFinish = (values: { reply: string }) => {
+    replyComments({ ...values, comments_id: commentsid }).then(res => {
       if (res.code === '0000') {
         message.success(res.msg);
         setOpen(false);
@@ -220,9 +220,10 @@ const Reviews: React.FC = () => {
     })
   };
 
-  const onChange = (value: string): void => {
+  const onChange = (value: string) => {
     fetchId(value);
   };
+
   return (
     <div>
       {loading ? (

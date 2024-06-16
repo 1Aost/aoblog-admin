@@ -1,14 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Dropdown, Space, Avatar, message } from 'antd';
-import apiFun from '@/api';
 import "./index.css"
+import { getAdminByToken } from '@/services/Admins';
 
-interface MessageType {
-  code: string
-  msg: string
-  data: null | Array<AdminType>
-}
 interface AdminType {
   admin_password: string
   admin_type: string
@@ -27,22 +22,18 @@ const MyHeader: React.FC = () => {
   });
   useEffect(() => {
     // 根据token获取用户信息
-    const admin_token = localStorage.getItem("admin_token");
-    (async function () {
-      try {
-        const res: MessageType = await apiFun.getAdminByToken({ admin_token });
-        if (res.code === '0000') {
-          setAdmin((res.data as Array<AdminType>)[0]);
-        } else if (res.code === '1111') {
-          message.error(res.msg);
-          navigate("/login")
-        } else {
-          message.error(res.msg);
-        }
-      } catch (_err) {
-        message.error("出错了，请稍后重试");
+    getAdminByToken({ admin_token: localStorage.getItem("admin_token") }).then(res => {
+      if (res.code === '0000') {
+        setAdmin((res.data as Array<AdminType>)[0]);
+      } else if (res.code === '1111') {
+        message.error(res.msg);
+        navigate("/login")
+      } else {
+        message.error(res.msg);
       }
-    })();
+    }).catch(_err => {
+      message.error("出错了，请稍后重试");
+    })
   }, []);
   function handleLogout(): void {
     message.success("成功退出");

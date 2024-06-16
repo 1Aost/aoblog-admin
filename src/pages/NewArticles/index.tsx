@@ -8,8 +8,9 @@ import "./index.css"
 import { Form } from 'antd';
 import { Tag, Input, Button, Drawer, Upload, message } from 'antd';
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons"
-import apiFun from '@/api';
 import HeaderGroup from '@/components-antd/Header/HeaderGroup';
+import { saveArticle, uploadImagwe } from '@/services/Articles';
+import { getAllTypes } from '@/services/Types';
 /**
  *  组件外声明只加载一次
  * */
@@ -113,7 +114,7 @@ const NewArticles: React.FC = () => {
   const customUpload = async ({ file }) => {
     const formData = new FormData();
     formData.append('file', file);
-    apiFun.uploadImagwe(formData).then((res: any) => {
+    uploadImagwe(formData).then(res => {
       setImageUrl("./images/" + res.url);
       setSubmitParams({ ...submitParams, image: "./images/" + res.url })
     })
@@ -121,7 +122,7 @@ const NewArticles: React.FC = () => {
 
   // 提交
   const Submit = () => {
-    apiFun.saveArticle({ content: text, ...submitParams }).then((res: any) => {
+    saveArticle({ content: text, ...submitParams }).then(res => {
       onClose();
       if (res.code === '0000') {
         message.success(res.msg);
@@ -145,7 +146,7 @@ const NewArticles: React.FC = () => {
     setSubmitParams({ ...submitParams, type: tagType });
   };
   useEffect(() => {
-    apiFun.getAllTypes().then((res: any) => {
+    getAllTypes().then(res => {
       if (res.code === '0000') {
         setTags(res.data);
       } else {

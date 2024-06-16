@@ -3,14 +3,9 @@ import { Form, Input } from 'antd';
 import { Button, Modal, Table, message } from 'antd'
 import { PlusOutlined } from "@ant-design/icons"
 import type { ColumnsType } from 'antd/es/table';
-import apiFun from '@/api';
 import ActionRender from '@/components-antd/Display/ActionRender';
 import HeaderGroup from '@/components-antd/Header/HeaderGroup';
-interface MessageType {
-  code: string
-  msg: string
-  data: null | Array<MyType>
-}
+import { addType, changeType, deleteType, getAllTypes } from '@/services/Types';
 interface DataType {
   id: number;
   type: string
@@ -66,26 +61,23 @@ const ArticlesType: React.FC = () => {
     fetchData();
   }, []);
   // 获取数据的函数
-  function fetchData() {
+  const fetchData = () => {
     // 获取所有的类型
-    (async function () {
-      try {
-        const res: MessageType = await apiFun.getAllTypes();
-        if (res.code === "0000") {
-          const typeData: MyType[] = (res.data as Array<MyType>).map((item: MyType) => item)
-          setType(typeData);
-        } else {
-          message.error(res.msg);
-        }
-      } catch (_err) {
-        message.error("出错了，请稍后重试");
+    getAllTypes().then(res => {
+      if (res.code === "0000") {
+        const typeData: MyType[] = (res.data as Array<MyType>).map((item: MyType) => item)
+        setType(typeData);
+      } else {
+        message.error(res.msg);
       }
-    })()
-  }
+    }).catch(_err => {
+      message.error("出错了，请稍后重试");
+    })
+  };
   // 删除
-  function handleDelete(e: any, record: DataType) {
+  const handleDelete = (e: any, record: DataType) => {
     e.preventDefault();
-    apiFun.deleteType({ id: record.id }).then((res: MessageType) => {
+    deleteType({ id: record.id }).then(res => {
       if (res.code === '0000') {
         message.success(res.msg);
         // 删除成功后重新获取数据
@@ -96,21 +88,21 @@ const ArticlesType: React.FC = () => {
     })
   }
   // 修改
-  function handleChange(e: any, record: DataType) {
+  const handleChange = (e: any, record: DataType) => {
     e.preventDefault();
     setSubType(2);
     showModal();
     setIds(record.id);
   }
   // 新增
-  function handleAdd(): void {
+  const handleAdd = () => {
     setSubType(1);
     showModal();
   }
   // 新增和修改的回调函数
   const onFinish = (values: { type: string }): void => {
     if (subtype === 1) {
-      apiFun.addType({ ...values }).then((res: MessageType) => {
+      addType({ ...values }).then(res => {
         if (res.code === '0000') {
           message.success(res.msg);
           setOpen(false);
@@ -120,7 +112,7 @@ const ArticlesType: React.FC = () => {
         }
       })
     } else if (subtype === 2) {
-      apiFun.changeType({ id: ids, ...values }).then((res: MessageType) => {
+      changeType({ id: ids, ...values }).then(res => {
         if (res.code === '0000') {
           message.success(res.msg);
           setOpen(false);

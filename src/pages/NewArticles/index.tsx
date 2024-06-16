@@ -124,11 +124,7 @@ const NewArticles: React.FC = () => {
   const Submit = () => {
     saveArticle({ content: text, ...submitParams }).then(res => {
       onClose();
-      if (res.code === '0000') {
-        message.success(res.msg);
-      } else {
-        message.error(res.msg);
-      }
+      message.success(res.msg);
     })
   };
   // Finish!

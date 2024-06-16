@@ -169,13 +169,9 @@ const ArticlesList: React.FC = () => {
   // 删除
   const handleDelete = (record: DataType) => {
     deleteArticle({ id: record.id }).then(res => {
-      if (res.code === '0000') {
-        message.success(res.msg);
-        // 删除成功后重新获取数据
-        fetchData();
-      } else {
-        message.error(res.msg);
-      }
+      message.success(res.msg);
+      // 删除成功后重新获取数据
+      fetchData();
     })
   }
   // 修改
@@ -187,14 +183,10 @@ const ArticlesList: React.FC = () => {
   // 修改的函数
   const onFinish = (values: ChangeType): void => {
     changeArticle({ id: ids, ...values, article_img: imageUrl }).then(res => {
-      if (res.code === '0000') {
-        message.success(res.msg);
-        setOpen(false);
-        fetchData();
-        form.resetFields();
-      } else {
-        message.error(res.msg);
-      }
+      message.success(res.msg);
+      setOpen(false);
+      fetchData();
+      form.resetFields();
     })
   };
   /**

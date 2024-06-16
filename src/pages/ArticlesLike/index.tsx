@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { message, Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import FilterSelect from '@/components-antd/Header/FilterSelect';
-import { selectLikesByArticleId } from '@/services/Likes';
+import { selectLikes } from '@/services/Likes';
 import { getAllArticles, getIdByName } from '@/services/Articles';
 interface LikeType {
   likes_id: number,
@@ -63,12 +63,8 @@ const ArticlesLike: React.FC = () => {
   };
   // 获取点赞数据
   const fetchData = () => {
-    selectLikesByArticleId({ id: id }).then(res => {
-      if (res.code === '0000') {
-        setLikes(res.data as Array<LikeType>);
-      } else {
-        message.error(res.msg);
-      }
+    selectLikes({ article_id: id }).then(res => {
+      setLikes(res.data as Array<LikeType>);
     }).catch(_err => {
       message.error("出错了，请联系管理员");
     })

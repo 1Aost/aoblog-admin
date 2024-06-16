@@ -52,11 +52,7 @@ const ArticlesLike: React.FC = () => {
   // 根据文章名称获取文章的id
   const fetchId = (name: string) => {
     getIdByName({ name }).then(res => {
-      if (res.code === '0000') {
-        setId((res.data as Array<ArticleType>)[0].id)
-      } else {
-        message.error(res.msg);
-      }
+      setId((res.data as Array<ArticleType>)[0].id);
     }).catch(_err => {
       message.error("出错了，请稍后重试");
     })
@@ -77,13 +73,9 @@ const ArticlesLike: React.FC = () => {
   // 获取所有文章名称
   useEffect(() => {
     getAllArticles().then(res => {
-      if (res.code === '0000') {
-        const articleData: string[] = (res.data as Array<ArticleType>).map((item: ArticleType) => item.article_title);
-        setArticle(articleData);
-        setLoading(false);
-      } else {
-        message.error(res.msg);
-      }
+      const articleData: string[] = (res.data as Array<ArticleType>).map((item: ArticleType) => item.article_title);
+      setArticle(articleData);
+      setLoading(false);
     }).catch(_err => {
       message.error("出错了，请联系管理员");
     })

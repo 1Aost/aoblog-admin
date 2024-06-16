@@ -147,39 +147,31 @@ const Reviews: React.FC = () => {
   // 修改状态
   const handleStatus = (status: number, id: number) => {
     changeCommentsStatus({ id, comments_status: status }).then(res => {
-      if (res.code === '0000') {
-        message.success(res.msg);
-        // 更新 data 数据
-        setComments((prevData) =>
-          prevData.map((item) => {
-            if (item.id === id) {
-              return { ...item, review_status: status };
-            }
-            return item;
-          })
-        );
-        fetchData();
-      } else {
-        message.error(res.msg);
-      }
+      message.success(res.msg);
+      // 更新 data 数据
+      setComments((prevData) =>
+        prevData.map((item) => {
+          if (item.id === id) {
+            return { ...item, review_status: status };
+          }
+          return item;
+        })
+      );
+      fetchData();
     })
   }
 
   // 根据文章名称获取文章的id
   const fetchId = (name: string) => {
     getIdByName({ name }).then(res => {
-      if (res.code === '0000') {
-        message.success(res.msg);
-        setId((res.data as Array<ArticleType>)[0].id)
-      } else {
-        message.error(res.msg);
-      }
+      message.success(res.msg);
+      setId((res.data as Array<ArticleType>)[0].id)
     });
   }
 
   // 获取评论数据
   const fetchData = () => {
-    getComments({ id }).then(res => {
+    getComments({ article_id: id }).then(res => {
       setComments(res.data as Array<CommentType>);
     })
   }
@@ -192,11 +184,9 @@ const Reviews: React.FC = () => {
   // 获取所有文章名称
   useEffect(() => {
     getAllArticles().then(res => {
-      if (res.code === '0000') {
-        const articleData: string[] = (res.data as Array<ArticleType>).map((item: ArticleType) => item.article_title);
-        setArticle(articleData);
-        setLoading(false);
-      }
+      const articleData: string[] = (res.data as Array<ArticleType>).map((item: ArticleType) => item.article_title);
+      setArticle(articleData);
+      setLoading(false);
     });
   }, []);
 
@@ -209,14 +199,9 @@ const Reviews: React.FC = () => {
 
   const onFinish = (values: { reply: string }) => {
     replyComments({ ...values, comments_id: commentsid }).then(res => {
-      if (res.code === '0000') {
-        message.success(res.msg);
-        setOpen(false);
-        fetchData();
-      } else {
-        message.error(res.msg);
-      }
-
+      message.success(res.msg);
+      setOpen(false);
+      fetchData();
     })
   };
 

@@ -3,14 +3,10 @@ import { Form, Input, Select, Upload } from 'antd';
 import { Button, Modal, Table, message } from 'antd'
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons"
 import type { ColumnsType } from 'antd/es/table';
-import apiFun from '@/api';
 import { timestampToTime } from "@/api/utils"
 import ActionRender from '@/components-antd/Display/ActionRender';
-interface MessageType {
-  code: string
-  msg: string
-  data: null | Array<ArticleType> | Array<MyType>
-}
+import { getAllTypes } from '@/services/Types';
+import { changeArticle, deleteArticle, getAllArticles, uploadImagwe } from '@/services/Articles';
 interface DataType {
   key: string,
   id: number;
@@ -117,8 +113,8 @@ const ArticlesList: React.FC = () => {
       fixed: 'right',
       render: (_, record) => (
         <ActionRender
-          onEdit={handleChange(record)}
-          onDelete={handleDelete(record)}
+          onEdit={() => handleChange(record)}
+          onDelete={() => handleDelete(record)}
         />
       ),
     },
@@ -141,26 +137,23 @@ const ArticlesList: React.FC = () => {
     fetchData();
     const typeData: string[] = [];
     // 获取所有的类型
-    (async function () {
-      try {
-        const res: MessageType = await apiFun.getAllTypes();
-        if (res.code === "0000") {
-          (res.data as Array<MyType>).map((item: MyType) => {
-            return typeData.push(item.type);
-          })
-        } else {
-          message.error(res.msg);
-        }
-        setType(typeData);
-      } catch (_err) {
-        message.error("出错了，请稍后重试");
+    getAllTypes().then(res => {
+      if (res.code === "0000") {
+        (res.data as Array<MyType>).map((item: MyType) => {
+          return typeData.push(item.type);
+        })
+      } else {
+        message.error(res.msg);
       }
-    })()
+      setType(typeData);
+    }).catch(_err => {
+      message.error("出错了，请稍后重试");
+    })
   }, []);
+
   // 获取数据的函数
-  async function fetchData() {
-    try {
-      const res: MessageType = await apiFun.getAllArticles();
+  const fetchData = () => {
+    getAllArticles().then(res => {
       const newData = (res.data as Array<ArticleType>).map((item: ArticleType, index) => ({
         ...item,
         // review_time:timestampToTime(item.review_time,true),
@@ -168,35 +161,32 @@ const ArticlesList: React.FC = () => {
         key: (index + 1).toString(),
       }));
       setData(newData);
-    } catch (_err) {
+    }).catch(_err => {
       message.error("出错了，请联系管理员");
-    }
-  }
+    })
+  };
+
   // 删除
-  function handleDelete(record: DataType): () => void {
-    return () => {
-      apiFun.deleteArticle({ id: record.id }).then((res: MessageType) => {
-        if (res.code === '0000') {
-          message.success(res.msg);
-          // 删除成功后重新获取数据
-          fetchData();
-        } else {
-          message.error(res.msg);
-        }
-      })
-    }
+  const handleDelete = (record: DataType) => {
+    deleteArticle({ id: record.id }).then(res => {
+      if (res.code === '0000') {
+        message.success(res.msg);
+        // 删除成功后重新获取数据
+        fetchData();
+      } else {
+        message.error(res.msg);
+      }
+    })
   }
   // 修改
-  function handleChange(record: DataType): () => void {
-    return () => {
-      showModal();
-      setIds(record.id);
-      form.setFieldsValue(record); // 设置表单的值
-    }
+  const handleChange = (record: DataType) => {
+    showModal();
+    setIds(record.id);
+    form.setFieldsValue(record); // 设置表单的值
   }
   // 修改的函数
   const onFinish = (values: ChangeType): void => {
-    apiFun.changeArticle({ id: ids, ...values, article_img: imageUrl }).then((res: MessageType) => {
+    changeArticle({ id: ids, ...values, article_img: imageUrl }).then(res => {
       if (res.code === '0000') {
         message.success(res.msg);
         setOpen(false);
@@ -247,10 +237,10 @@ const ArticlesList: React.FC = () => {
     }
   };
   // 自定义上传函数
-  const customUpload = async ({ file }) => {
+  const customUpload = ({ file }) => {
     const formData = new FormData();
     formData.append('file', file);
-    apiFun.uploadImagwe(formData).then((res: any) => {
+    uploadImagwe(formData).then(res => {
       setImageUrl("./images/" + res.url);
     })
   };

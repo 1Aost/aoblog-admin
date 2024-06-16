@@ -3,21 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Form, Input, message, Modal, Tag, Upload } from 'antd';
 import { EditOutlined, LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import layout from 'antd/es/layout';
-import apiFun from '@/api';
 import "./index.css"
-
-interface MessageType {
-  code: string
-  msg: string
-  data: null | Array<AdminType>
-}
+import { changeAdmin, getAdminByToken, uploadAvatar } from '@/services/Admins';
 interface AdminType {
   admin_password: string
   admin_type: string
   admin_username: string
   avatar: string
   id: number
-}
+};
+
 const Ownmessage: React.FC = () => {
   const [admin, setAdmin] = useState<any>({});
   const [open, setOpen] = useState<boolean>(false);
@@ -78,14 +73,14 @@ const Ownmessage: React.FC = () => {
   const customUpload = async ({ file }) => {
     const formData = new FormData();
     formData.append('file', file);
-    apiFun.uploadAvatar(formData).then((res: any) => {
+    uploadAvatar(formData).then((res: any) => {
       setImageUrl("./avatar/" + res.url);
     })
   };
-  function fetchData(): void {
+
+  const fetchData = () => {
     // 根据token获取用户信息
-    const admin_token = localStorage.getItem("admin_token")
-    apiFun.getAdminByToken({ admin_token }).then((res: MessageType) => {
+    getAdminByToken({ admin_token: localStorage.getItem("admin_token") }).then(res => {
       if (res.code === '0000') {
         setAdmin((res.data as Array<AdminType>)[0]);
       } else if (res.code === '1111') {
@@ -95,12 +90,19 @@ const Ownmessage: React.FC = () => {
         message.error(res.msg);
       }
     })
-  }
+  };
+
   useEffect(() => {
     fetchData();
   }, []);
-  const onFinish = (values: any): void => {
-    apiFun.changeAdmin({ id: admin.id, ...values, avatar: imageUrl, admin_type: admin.admin_type }).then((res: any) => {
+
+  const onFinish = (values: any) => {
+    changeAdmin({
+      id: admin.id,
+      ...values,
+      avatar: imageUrl,
+      admin_type: admin.admin_type
+    }).then(res => {
       if (res.code === '0000') {
         message.success(res.msg);
         setOpen(false);
@@ -110,9 +112,7 @@ const Ownmessage: React.FC = () => {
       }
     })
   };
-  function handleChange(): void {
-    showModal();
-  }
+
   return (
     <div className="bbb">
       <h3>个人信息展示</h3>
@@ -130,7 +130,7 @@ const Ownmessage: React.FC = () => {
           <span>密码：</span><p>{admin.admin_password}</p>
         </div>
       </div>
-      <Button onClick={handleChange} icon={<EditOutlined />}>Edit</Button>
+      <Button onClick={() => showModal()} icon={<EditOutlined />}>Edit</Button>
       <Modal
         title="修改个人信息"
         open={open}

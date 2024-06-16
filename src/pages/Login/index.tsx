@@ -1,20 +1,15 @@
 import React, { useEffect } from 'react'
 import { useNavigate } from "react-router-dom"
 import { Button, Form, Input, Card, message } from 'antd';
-import { tsParticles } from "tsparticles"
-import apiFun from '@/api';
+import { tsParticles } from "tsparticles";
 import { timestampToTime } from '@/api/utils';
-import "./index.css"
+import "./index.css";
+import { login } from '@/services/Admins';
 
-interface MessageType {
-  code: string // 返回的状态码
-  msg: string // 提示信息
-  data: string | null // 携带的token
-}
 const Login: React.FC = () => {
   const navigateTo = useNavigate();
   const onFinish = (values: { username: string, password: string }) => {
-    apiFun.login(values).then((res: MessageType) => {
+    login(values).then(res => {
       if (res.code === '0000') {
         localStorage.setItem("admin_token", res.data as string);
         message.success(res.msg);

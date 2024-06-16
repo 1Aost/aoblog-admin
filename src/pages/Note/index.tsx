@@ -2,10 +2,9 @@ import React, { useEffect, useState, useMemo } from 'react'
 import { Space, Tooltip, Table, Tag, theme, message, Form, Button, Modal, Input } from 'antd'
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
-
-import apiFun from '@/api';
 import { timestampToTime } from "@/api/utils"
 import ActionRender from '@/components-antd/Display/ActionRender';
+import { changeReviewsStatus, getReviews, replyReviews } from '@/services/Reviews';
 interface DataType {
   key: string,
   id: number;
@@ -29,26 +28,24 @@ const Customer: React.FC = () => {
     };
   }, [arrow]);
   // 修改状态
-  function handleStatus(status: number, id: number) {
-    return () => {
-      apiFun.changeReviewsStatus({ id, review_status: status }).then((res: any) => {
-        if (res.code === '0000') {
-          message.success(res.msg);
-          // 更新 data 数据
-          setData((prevData) =>
-            prevData.map((item) => {
-              if (item.id === id) {
-                return { ...item, review_status: status };
-              }
-              return item;
-            })
-          );
-        } else {
-          message.error(res.msg);
-        }
-      })
-    }
-  }
+  const handleStatus = (status: number, id: number) => {
+    changeReviewsStatus({ id, review_status: status }).then(res => {
+      if (res.code === '0000') {
+        message.success(res.msg);
+        // 更新 data 数据
+        setData((prevData) =>
+          prevData.map((item) => {
+            if (item.id === id) {
+              return { ...item, review_status: status };
+            }
+            return item;
+          })
+        );
+      } else {
+        message.error(res.msg);
+      }
+    })
+  };
   const columns: ColumnsType<DataType> = [
     {
       title: 'Id',
@@ -84,7 +81,7 @@ const Customer: React.FC = () => {
           {
             record.review_status === 0 ?
               (
-                <div onClick={handleStatus(1, record.id)}>
+                <div onClick={() => handleStatus(1, record.id)}>
                   <Tooltip placement="top" title={"点击通过"} arrow={mergedArrow}>
                     <Tag icon={<CloseCircleOutlined />} color="error">
                       未通过
@@ -94,7 +91,7 @@ const Customer: React.FC = () => {
 
               ) :
               (
-                <div onClick={handleStatus(0, record.id)}>
+                <div onClick={() => handleStatus(0, record.id)}>
                   <Tooltip placement="top" title={"点击关闭"} arrow={mergedArrow}>
                     <Tag icon={<CheckCircleOutlined />} color="success">
                       已通过
@@ -139,19 +136,19 @@ const Customer: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [id, setId] = useState<number>(0);
   const [form] = Form.useForm();
-  const showModal = (): void => {
+  const showModal = () => {
     form.resetFields();
     setOpen(true);
   };
-  const handleCancel = (): void => {
+  const handleCancel = () => {
     setOpen(false);
   };
   useEffect(() => {
     fetchData();
   }, []);
   // 获取数据的函数
-  function fetchData(): void {
-    apiFun.getReviews().then((res: any) => {
+  const fetchData = () => {
+    getReviews().then(res => {
       const newData = res.data.map((item, index) => ({
         ...item,
         review_time: timestampToTime(item.review_time, true),
@@ -161,13 +158,13 @@ const Customer: React.FC = () => {
     });
   }
   // 回复
-  function handleReply(e: any, record: any) {
+  const handleReply = (e: any, record: any) => {
     e.preventDefault();
     showModal();
     setId(record.id);
   }
   const onFinish = (values: any) => {
-    apiFun.replyReviews({ ...values, id: id }).then((res: any) => {
+    replyReviews({ ...values, id: id }).then(res => {
       if (res.code === '0000') {
         message.success(res.msg);
         setOpen(false);
@@ -175,7 +172,6 @@ const Customer: React.FC = () => {
       } else {
         message.error(res.msg);
       }
-
     })
   };
 

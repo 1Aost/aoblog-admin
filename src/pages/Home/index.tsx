@@ -17,14 +17,9 @@ import {
 } from "recharts";
 // 引入相关Hooks
 // import { useSelector, useDispatch } from 'react-redux';
-import apiFun from '@/api';
 import "./index.css"
-
-interface MessageType {
-  code: string
-  msg: string
-  data: null | Array<ArticleType> | Array<AdminType>
-}
+import { getAllArticles } from '@/services/Articles';
+import { getAdminByToken } from '@/services/Admins';
 interface ArticleType {
   id: number
   article_url: string
@@ -77,7 +72,7 @@ const Home: React.FC = () => {
   const [admin, setAdmin] = useState<any>({});
   const navigate = useNavigate();
   useEffect(() => {
-    apiFun.getAllArticles().then((res: any) => {
+    getAllArticles().then(res => {
       const newData = res.data.map((item: any) => ({
         name: item.article_title,
         value: item.comments_length,
@@ -87,39 +82,33 @@ const Home: React.FC = () => {
   }, [])
   const [data, setData] = useState<NewArticleType[]>([]);
   useEffect(() => {
-    (async function () {
-      try {
-        const res: MessageType = await apiFun.getAllArticles()
-        const newData: NewArticleType[] = (res.data as Array<ArticleType>).map((item: ArticleType) => ({
-          name: item.article_title,
-          article_likes: item.article_likes,
-          article_views: item.article_views
-        }));
-        setData(newData);
-      } catch (_err) {
-        message.error("出错了，请稍后重试");
-      }
-    })()
+    getAllArticles().then(res => {
+      const newData: NewArticleType[] = (res.data as Array<ArticleType>).map((item: ArticleType) => ({
+        name: item.article_title,
+        article_likes: item.article_likes,
+        article_views: item.article_views
+      }));
+      setData(newData);
+    }).catch(_err => {
+      message.error("出错了，请稍后重试");
+    });
   }, [])
   // 根据token获取用户信息
   useEffect(() => {
-    const admin_token = localStorage.getItem("admin_token");
-    (async function () {
-      try {
-        const res: MessageType = await apiFun.getAdminByToken({ admin_token });
-        if (res.code === '0000') {
-          setAdmin((res.data as Array<AdminType>)[0]);
-        } else if (res.code === '1111') {
-          message.error(res.msg);
-          navigate("/login")
-        } else {
-          message.error(res.msg);
-        }
-      } catch (_err) {
-        message.error("出错了，请稍后重试");
+    getAdminByToken({ admin_token: localStorage.getItem("admin_token") }).then(res => {
+      if (res.code === '0000') {
+        setAdmin((res.data as Array<AdminType>)[0]);
+      } else if (res.code === '1111') {
+        message.error(res.msg);
+        navigate("/login")
+      } else {
+        message.error(res.msg);
       }
-    })()
+    }).catch(_err => {
+      message.error("出错了，请稍后重试");
+    });
   }, []);
+
   const plugins: any = [
     'MapType',
     'Scale',

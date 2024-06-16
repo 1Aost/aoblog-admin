@@ -5,15 +5,10 @@ import { Space, Button, Modal, Table, message } from 'antd'
 import { PlusOutlined, LoadingOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import "./index.css"
-import apiFun from '@/api';
 import { useNavigate } from 'react-router-dom';
 import ActionRender from '@/components-antd/Display/ActionRender';
 import HeaderGroup from '@/components-antd/Header/HeaderGroup';
-interface MessageType {
-  code: string // 返回的状态码
-  msg: string // 提示信息
-  data: null | Array<AdminType>
-}
+import { addAdmin, changeAdmin, deleteAdmin, getAdminByToken, getAllAdmins, uploadAvatar } from '@/services/Admins';
 interface AdminType {
   admin_password: string
   admin_type: string
@@ -71,8 +66,8 @@ const Manager: React.FC = () => {
       render: (_, record) => (
         status === '超级管理员' ?
           <ActionRender
-            onEdit={handleChange(record)}
-            onDelete={handleDelete(record)}
+            onEdit={() => handleChange(record)}
+            onDelete={() => handleDelete(record)}
           />
           :
           <ActionRender
@@ -103,7 +98,7 @@ const Manager: React.FC = () => {
 
   // 获取数据的函数
   function fetchData() {
-    apiFun.getAllAdmins().then((res: MessageType) => {
+    getAllAdmins().then(res => {
       const newData = (res.data as Array<AdminType>).map((item, index) => ({
         ...item,
         key: (index + 1).toString(),
@@ -151,31 +146,29 @@ const Manager: React.FC = () => {
     }
   };
   // 自定义上传函数
-  const customUpload = async ({ file }) => {
+  const customUpload = ({ file }) => {
     const formData = new FormData();
     formData.append('file', file);
-    apiFun.uploadAvatar(formData).then((res: any) => {
+    uploadAvatar(formData).then(res => {
       setImageUrl("./avatar/" + res.url);
     })
   };
   //  新增
-  function handleAdd(): void {
+  const handleAdd = () => {
     setType(1);
     showModal();
   }
   // 删除
-  function handleDelete(record: DataType) {
-    return () => {
-      apiFun.deleteAdmin({ id: record.id }).then((res: MessageType) => {
-        if (res.code === '6001') {
-          message.error(res.msg);
-        } else {
-          message.success(res.msg);
-          // 删除成功后重新获取数据
-          fetchData();
-        }
-      })
-    }
+  const handleDelete = (record: DataType) => {
+    deleteAdmin({ id: record.id }).then(res => {
+      if (res.code === '6001') {
+        message.error(res.msg);
+      } else {
+        message.success(res.msg);
+        // 删除成功后重新获取数据
+        fetchData();
+      }
+    })
   }
   // 修改中type的选择
   const onTypeChange = (value: string): void => {
@@ -184,7 +177,7 @@ const Manager: React.FC = () => {
   // 新增和修改的回调函数
   const onFinish = (values: { admin_password: string, admin_type: string, admin_username: string }) => {
     if (type === 1) {
-      apiFun.addAdmin({ ...values, avatar: imageUrl }).then((res: MessageType) => {
+      addAdmin({ ...values, avatar: imageUrl }).then(res => {
         if (res.code === '0000') {
           message.success(res.msg);
           setOpen(false);
@@ -195,7 +188,7 @@ const Manager: React.FC = () => {
         form.resetFields();
       })
     } else if (type === 2) {
-      apiFun.changeAdmin({ id: ids, ...values, avatar: imageUrl }).then((res: MessageType) => {
+      changeAdmin({ id: ids, ...values, avatar: imageUrl }).then(res => {
         if (res.code === '0000') {
           message.success(res.msg);
           setOpen(false);
@@ -209,13 +202,11 @@ const Manager: React.FC = () => {
   };
 
   // 修改
-  function handleChange(record: DataType): () => void {
-    return () => {
-      setType(2);
-      showModal();
-      setIds(record.id);
-      form.setFieldsValue(record);
-    }
+  const handleChange = (record: DataType) => {
+    setType(2);
+    showModal();
+    setIds(record.id);
+    form.setFieldsValue(record);
   }
   // 表单的重置
   const onReset = (): void => {
@@ -223,8 +214,7 @@ const Manager: React.FC = () => {
   };
   useEffect(() => {
     // 根据token获取用户信息
-    const admin_token = localStorage.getItem("admin_token")
-    apiFun.getAdminByToken({ admin_token }).then((res: MessageType) => {
+    getAdminByToken({ admin_token: localStorage.getItem("admin_token") }).then(res => {
       if (res.code === '0000') {
         setStatus((res.data as Array<AdminType>)[0].admin_type);
       } else if (res.code === '1111') {
@@ -235,6 +225,7 @@ const Manager: React.FC = () => {
       }
     })
   }, []);
+
   return (
     <div
       style={{

@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { message, Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import apiFun from '@/api';
 import FilterSelect from '@/components-antd/Header/FilterSelect';
-interface MessageType {
-  code: string
-  msg: string
-  data: null | Array<ArticleType> | Array<LikeType>
-}
+import { selectLikesByArticleId } from '@/services/Likes';
+import { getAllArticles, getIdByName } from '@/services/Articles';
 interface LikeType {
   likes_id: number,
   user_id2: number,
@@ -54,51 +50,47 @@ const ArticlesLike: React.FC = () => {
   const [article, setArticle] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true); // Loading state
   // 根据文章名称获取文章的id
-  async function fetchId(name: string): Promise<void> {
-    try {
-      const res: MessageType = await apiFun.getIdByName({ name });
+  const fetchId = (name: string) => {
+    getIdByName({ name }).then(res => {
       if (res.code === '0000') {
         setId((res.data as Array<ArticleType>)[0].id)
       } else {
         message.error(res.msg);
       }
-    } catch (_err) {
+    }).catch(_err => {
       message.error("出错了，请稍后重试");
-    }
-  }
+    })
+  };
   // 获取点赞数据
-  async function fetchData(): Promise<void> {
-    try {
-      const res: MessageType = await apiFun.selectLikesByArticleId({ id: id });
+  const fetchData = () => {
+    selectLikesByArticleId({ id: id }).then(res => {
       if (res.code === '0000') {
         setLikes(res.data as Array<LikeType>);
       } else {
         message.error(res.msg);
       }
-    } catch (_err) {
+    }).catch(_err => {
       message.error("出错了，请联系管理员");
-    }
-  }
+    })
+  };
+
   // 获取指定文章的所有点赞信息
   useEffect(() => {
     fetchData();
   }, [id])
   // 获取所有文章名称
   useEffect(() => {
-    (async function () {
-      try {
-        const res: MessageType = await apiFun.getAllArticles();
-        if (res.code === '0000') {
-          const articleData: string[] = (res.data as Array<ArticleType>).map((item: ArticleType) => item.article_title);
-          setArticle(articleData);
-          setLoading(false);
-        } else {
-          message.error(res.msg);
-        }
-      } catch (_err) {
-        message.error("出错了，请联系管理员");
+    getAllArticles().then(res => {
+      if (res.code === '0000') {
+        const articleData: string[] = (res.data as Array<ArticleType>).map((item: ArticleType) => item.article_title);
+        setArticle(articleData);
+        setLoading(false);
+      } else {
+        message.error(res.msg);
       }
-    })()
+    }).catch(_err => {
+      message.error("出错了，请联系管理员");
+    })
   }, []);
 
   const onChange: (value: string) => void = (value: string): void => {

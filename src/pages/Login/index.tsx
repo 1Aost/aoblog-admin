@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
-import {useNavigate} from "react-router-dom"
-import { Button, Form, Input,Card, message } from 'antd';
-import {tsParticles} from "tsparticles"
+import { useNavigate } from "react-router-dom"
+import { Button, Form, Input, Card, message } from 'antd';
+import { tsParticles } from "tsparticles"
 import apiFun from '@/api';
 import { timestampToTime } from '@/api/utils';
 import "./index.css"
@@ -12,25 +12,22 @@ interface MessageType {
   data: string | null // 携带的token
 }
 const Login: React.FC = () => {
-  const navigateTo=useNavigate();
-  const onFinish = (values: {username: string,password: string}) => {
-    apiFun.login(values).then((res: MessageType)=>{
-      if(res.code==='0000') {
-        localStorage.setItem("admin_token",res.data as string);
+  const navigateTo = useNavigate();
+  const onFinish = (values: { username: string, password: string }) => {
+    apiFun.login(values).then((res: MessageType) => {
+      if (res.code === '0000') {
+        localStorage.setItem("admin_token", res.data as string);
         message.success(res.msg);
-        localStorage.setItem("login_time",timestampToTime(Date.now(),true));
+        localStorage.setItem("login_time", timestampToTime(Date.now(), true));
         navigateTo("/main/home");
-      }else if(res.code==='5000') {
+      } else if (res.code === '5000') {
         message.error(res.msg)
-      }else if(res.code==='5001') {
+      } else if (res.code === '5001') {
         message.warning(res.msg)
       }
     })
   };
-  const onFinishFailed = (errorInfo:any): void => {
-    console.log('Failed:', errorInfo);
-    alert("登录失败，请稍后再试");
-  };
+
   useEffect(() => {
     const particlesContainer: HTMLDivElement = document.createElement("div");
     particlesContainer.id = "particles-container";
@@ -138,7 +135,6 @@ const Login: React.FC = () => {
             remember: true,
           }}
           onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
           <Form.Item
@@ -150,8 +146,8 @@ const Login: React.FC = () => {
                 message: 'Please input your username!',
               },
             ]}
-            >
-              <Input className='input' />
+          >
+            <Input className='input' />
           </Form.Item>
           <Form.Item
             label="Password"
@@ -162,7 +158,7 @@ const Login: React.FC = () => {
                 message: 'Please input your password!',
               },
             ]}
-            >
+          >
             <Input.Password className='input' />
           </Form.Item>
           <Form.Item
@@ -170,7 +166,7 @@ const Login: React.FC = () => {
               offset: 8,
               span: 16,
             }}
-            >
+          >
             <Button className='btn' type="primary" htmlType="submit">
               登录
             </Button>

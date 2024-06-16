@@ -1,10 +1,11 @@
+import React from 'react';
 import { Button, ButtonProps, Popconfirm, Space, Tooltip } from "antd";
 import { type ReactNode } from "react";
 interface Iprops {
     onEdit?: (e?) => void;
-    editProps?: {title?: string; tooltip?: string} & ButtonProps;
+    editProps?: { title?: string; tooltip?: string } & ButtonProps;
     onDelete?: (e?) => void;
-    deleteProps?: {tooltip?: string} & ButtonProps;
+    deleteProps?: { tooltip?: string } & ButtonProps;
     extra?: ReactNode;
     buttons?: ({ title: string; tooltip?: string } & ButtonProps)[];
 }
@@ -20,7 +21,7 @@ const ActionRender = (props: Iprops) => {
                         onClick={() => {
                             onEdit?.();
                         }}
-                        style={{padding: 0}}
+                        style={{ padding: 0 }}
                         {...editProps}
                     >
                         {editProps?.title ?? '编辑'}
@@ -29,12 +30,12 @@ const ActionRender = (props: Iprops) => {
             )}
             {buttons?.length > 0 &&
                 buttons?.map((btn, index) => (
-                <Tooltip key={index} title={btn?.tooltip}>
-                    <Button disabled={btn?.disabled} style={buttonStyle} type="text" onClick={btn.onClick}>
-                    {btn?.title}
-                    </Button>
-                </Tooltip>
-            ))}
+                    <Tooltip key={index} title={btn?.tooltip}>
+                        <Button disabled={btn?.disabled} style={buttonStyle} type="text" onClick={btn.onClick}>
+                            {btn?.title}
+                        </Button>
+                    </Tooltip>
+                ))}
 
             {onDelete && (
                 <Popconfirm
@@ -44,7 +45,7 @@ const ActionRender = (props: Iprops) => {
                     }}
                 >
                     <Tooltip title={deleteProps?.tooltip}>
-                        <Button type='link' style={{padding: 0}} danger>
+                        <Button type='link' style={{ padding: 0 }} danger>
                             {deleteProps?.title ?? '删除'}
                         </Button>
                     </Tooltip>

@@ -8,7 +8,7 @@ import "./index.css"
 
 interface MessageType {
   code: string
-  msg:string
+  msg: string
   data: null | Array<AdminType>
 }
 interface AdminType {
@@ -18,18 +18,17 @@ interface AdminType {
   avatar: string
   id: number
 }
-const Ownmessage:React.FC=()=>{
-  const [admin,setAdmin]=useState<any>({});
+const Ownmessage: React.FC = () => {
+  const [admin, setAdmin] = useState<any>({});
   const [open, setOpen] = useState<boolean>(false);
-  const navigate=useNavigate();
-  const [form]=Form.useForm();
+  const navigate = useNavigate();
+  const [form] = Form.useForm();
   // Modal对话框
   const showModal = (): void => {
     form.resetFields();
     setOpen(true);
   };
   const handleCancel = (): void => {
-    console.log('Clicked cancel button');
     setOpen(false);
   };
   // 表单的重置
@@ -68,7 +67,7 @@ const Ownmessage:React.FC=()=>{
       setLoading(true);
       return;
     }
-    if (info.file.status === 'done') {    
+    if (info.file.status === 'done') {
       getBase64(info.file.originFileObj, (imageUrl: any) => {
         setImageUrl(imageUrl);
         setLoading(false);
@@ -76,43 +75,40 @@ const Ownmessage:React.FC=()=>{
     }
   };
   // 自定义上传函数
-  const customUpload = async ({ file, onSuccess, onError }) => {
+  const customUpload = async ({ file }) => {
     const formData = new FormData();
     formData.append('file', file);
-    apiFun.uploadAvatar(formData).then((res:any)=>{
-      setImageUrl("./avatar/"+res.url);
+    apiFun.uploadAvatar(formData).then((res: any) => {
+      setImageUrl("./avatar/" + res.url);
     })
   };
   function fetchData(): void {
     // 根据token获取用户信息
-    let admin_token=localStorage.getItem("admin_token")
-    apiFun.getAdminByToken({admin_token}).then((res: MessageType)=>{
-      if(res.code==='0000') {
+    const admin_token = localStorage.getItem("admin_token")
+    apiFun.getAdminByToken({ admin_token }).then((res: MessageType) => {
+      if (res.code === '0000') {
         setAdmin((res.data as Array<AdminType>)[0]);
-      }else if(res.code==='1111') {
+      } else if (res.code === '1111') {
         message.error(res.msg);
         navigate("/login");
-      }else {
+      } else {
         message.error(res.msg);
       }
     })
   }
-  useEffect(()=>{
+  useEffect(() => {
     fetchData();
-  },[]);
+  }, []);
   const onFinish = (values: any): void => {
-    apiFun.changeAdmin({id:admin.id,...values,avatar:imageUrl,admin_type:admin.admin_type}).then((res:any)=>{
-      if(res.code==='0000') {
+    apiFun.changeAdmin({ id: admin.id, ...values, avatar: imageUrl, admin_type: admin.admin_type }).then((res: any) => {
+      if (res.code === '0000') {
         message.success(res.msg);
         setOpen(false);
         fetchData();
-      }else {
+      } else {
         message.error(res.msg);
       }
     })
-  };
-  const onFinishFailed = (errorInfo: any): void => {
-    console.log('Failed:', errorInfo);
   };
   function handleChange(): void {
     showModal();
@@ -125,7 +121,7 @@ const Ownmessage:React.FC=()=>{
       </div>
       <div className="info">
         <div className="status">
-          <span>身份：</span><Tag color={admin.admin_type==='超级管理员'?"cyan":"purple"}>{admin.admin_type}</Tag>
+          <span>身份：</span><Tag color={admin.admin_type === '超级管理员' ? "cyan" : "purple"}>{admin.admin_type}</Tag>
         </div>
         <div className="name">
           <span>用户名：</span><p>{admin.admin_username}</p>
@@ -142,38 +138,37 @@ const Ownmessage:React.FC=()=>{
         footer={null}
       >
         <Form
-            {...layout}
-            name="basic"
-            form={form}
-            style={{ maxWidth: 600 }}
-            onFinish={onFinish}
-            onFinishFailed={onFinishFailed}
-            // autoComplete="off"
+          {...layout}
+          name="basic"
+          form={form}
+          style={{ maxWidth: 600 }}
+          onFinish={onFinish}
+        // autoComplete="off"
         >
-            <Form.Item
-              label="Username"
-              name="admin_username"
-              rules={[{ required: true, message: 'Please input your username!' }]}
+          <Form.Item
+            label="Username"
+            name="admin_username"
+            rules={[{ required: true, message: 'Please input your username!' }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Password"
+            name="admin_password"
+            rules={[{ required: true, message: 'Please input your password!' }]}
+          >
+            <Input.Password />
+          </Form.Item>
+          <Form.Item label="Avatar" style={{ marginLeft: "25px" }}>
+            <Upload
+              name="file"
+              listType="picture-card"
+              className="avatar-uploader"
+              showUploadList={false}
+              beforeUpload={beforeUpload}
+              onChange={handleChangeimg}
+              customRequest={({ file }) => customUpload({ file })}
             >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              label="Password"
-              name="admin_password"
-              rules={[{ required: true, message: 'Please input your password!' }]}
-            >
-              <Input.Password />
-            </Form.Item>
-            <Form.Item label="Avatar" style={{marginLeft:"25px"}}>
-              <Upload
-                name="file"
-                listType="picture-card"
-                className="avatar-uploader"
-                showUploadList={false}
-                beforeUpload={beforeUpload}
-                onChange={handleChangeimg}
-                customRequest={({ file, onSuccess, onError }) => customUpload({ file, onSuccess, onError })}
-              >
               {imageUrl ? (
                 <img src={imageUrl} alt="avatar" style={{ width: '100%', marginTop: '10px' }} />
               ) : (
@@ -182,18 +177,18 @@ const Ownmessage:React.FC=()=>{
                   <div style={{ marginTop: 8 }}>Upload</div>
                 </div>
               )}
-              </Upload>
-            </Form.Item>
-            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-              <Button type="primary" htmlType="submit">
-                提交
-              </Button>
-              <Button htmlType="button" onClick={onReset} style={{marginLeft:"10px"}}>
-                重置
-              </Button>
-            </Form.Item>
+            </Upload>
+          </Form.Item>
+          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+            <Button type="primary" htmlType="submit">
+              提交
+            </Button>
+            <Button htmlType="button" onClick={onReset} style={{ marginLeft: "10px" }}>
+              重置
+            </Button>
+          </Form.Item>
         </Form>
-    </Modal>
+      </Modal>
     </div>
   )
 }

@@ -6,7 +6,7 @@ import "./index.css"
 
 interface MessageType {
   code: string
-  msg:string
+  msg: string
   data: null | Array<AdminType>
 }
 interface AdminType {
@@ -16,34 +16,34 @@ interface AdminType {
   avatar: string
   id: number
 }
-const MyHeader:React.FC=()=>{
-  const navigate=useNavigate();
-  const [admin,setAdmin]=useState<AdminType>({
+const MyHeader: React.FC = () => {
+  const navigate = useNavigate();
+  const [admin, setAdmin] = useState<AdminType>({
     admin_password: "",
     admin_type: "",
     admin_username: "",
     avatar: "",
     id: 0
   });
-  useEffect(()=>{
+  useEffect(() => {
     // 根据token获取用户信息
-    let admin_token=localStorage.getItem("admin_token");
-    (async function() {
+    const admin_token = localStorage.getItem("admin_token");
+    (async function () {
       try {
-        const res: MessageType=await apiFun.getAdminByToken({admin_token});
-        if(res.code==='0000') {
+        const res: MessageType = await apiFun.getAdminByToken({ admin_token });
+        if (res.code === '0000') {
           setAdmin((res.data as Array<AdminType>)[0]);
-        }else if(res.code==='1111') {
+        } else if (res.code === '1111') {
           message.error(res.msg);
           navigate("/login")
-        }else {
+        } else {
           message.error(res.msg);
         }
-      }catch(err) {
+      } catch (_err) {
         message.error("出错了，请稍后重试");
       }
     })();
-  },[]);
+  }, []);
   function handleLogout(): void {
     message.success("成功退出");
     localStorage.removeItem("admin_token");
@@ -69,7 +69,7 @@ const MyHeader:React.FC=()=>{
       trigger={['click']}
     >
       <a href="###" onClick={(e) => e.preventDefault()}>
-        <span style={{marginRight:"10px",color:"#666"}}>{admin.admin_username}</span>
+        <span style={{ marginRight: "10px", color: "#666" }}>{admin.admin_username}</span>
         <Space>
           <Avatar src={<img src={admin.avatar} alt="avatar" />} />
         </Space>

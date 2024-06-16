@@ -1,3 +1,4 @@
+import React from 'react';
 import { Space } from 'antd';
 import type { ReactNode } from 'react';
 import './HeaderGroup.css';
@@ -12,11 +13,11 @@ const HeaderGroup = (props: IProps) => {
   const { label, extra, children } = props;
   return (
     <Space className='header-group'>
-        <div className='content'>
-            <div className='label'>{label}</div>
-            <div>{children}</div>
-        </div>
-        <div>{extra}</div>
+      <div className='content'>
+        <div className='label'>{label}</div>
+        <div>{children}</div>
+      </div>
+      <div>{extra}</div>
     </Space>
   );
 };

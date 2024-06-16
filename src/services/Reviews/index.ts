@@ -10,7 +10,7 @@ export async function changeReviewsStatus(params: {
   id: number,
   review_status: number,
 }): Promise<any> {
-  return request.post("/api/reviews/reviewstatus", params);
+  return request.put("/api/reviews/status", params);
 }
 
 // 根据id管理员回复留言
@@ -18,5 +18,5 @@ export async function replyReviews(params: {
   id: number,
   reply: string,
 }): Promise<any> {
-  return request.post("/api/reviews/replyreview", params);
+  return request.post("/api/reviews/reply", params);
 }

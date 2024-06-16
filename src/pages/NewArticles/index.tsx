@@ -6,7 +6,7 @@ import 'highlight.js/styles/github.css'; // 引入github风格的代码高亮样
 import 'react-markdown-editor-lite/lib/index.css';
 import "./index.css"
 import { Form } from 'antd';
-import { Tag,Input,Button,Drawer,Upload,message } from 'antd';
+import { Tag, Input, Button, Drawer, Upload, message } from 'antd';
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons"
 import apiFun from '@/api';
 import HeaderGroup from '@/components-antd/Header/HeaderGroup';
@@ -24,18 +24,20 @@ const mdParser = new MarkdownIt({
   html: true,
   linkify: true,
   typographer: true, // 设置代码高亮的配置
-  highlight(code:any, language:any) {
+  highlight(code: any, language: any) {
     if (language && hljs.getLanguage(language)) {
       try {
         return `<pre><code class="hljs language-${language}">${hljs.highlight(code, { language }).value}</code></pre>`;
-      } catch (__) {}
+      } catch (__) {
+        throw new Error("some error");
+      }
     }
 
     return `<pre class="hljs"><code>${mdParser.utils.escapeHtml(code)}</code></pre>`;
   },
 });
-const NewArticles:React.FC=()=>{
-  const [text,setText]=useState("");
+const NewArticles: React.FC = () => {
+  const [text, setText] = useState("");
   // 抽屉显示
   const [visible, setVisible] = useState(false);
   // 标签
@@ -56,11 +58,11 @@ const NewArticles:React.FC=()=>{
     type: '',
     column: '',
     cover: '',
-    image:"",
+    image: "",
     publish: false,
   });
-   // 抽屉是否展开
-   const showDrawer = () => {
+  // 抽屉是否展开
+  const showDrawer = () => {
     setVisible(true);
   };
   // 关闭抽屉
@@ -99,7 +101,7 @@ const NewArticles:React.FC=()=>{
       setLoading(true);
       return;
     }
-    if (info.file.status === 'done') {    
+    if (info.file.status === 'done') {
       getBase64(info.file.originFileObj, (imageUrl: any) => {
         setImageUrl(imageUrl);
         setSubmitParams({ ...submitParams, cover: info.file.response.url });
@@ -108,49 +110,49 @@ const NewArticles:React.FC=()=>{
     }
   };
   // 自定义上传函数
-  const customUpload = async ({ file, onSuccess, onError }) => {
+  const customUpload = async ({ file }) => {
     const formData = new FormData();
     formData.append('file', file);
-    apiFun.uploadImagwe(formData).then((res:any)=>{
-      setImageUrl("./images/"+res.url);
-      setSubmitParams({...submitParams,image:"./images/"+res.url})
+    apiFun.uploadImagwe(formData).then((res: any) => {
+      setImageUrl("./images/" + res.url);
+      setSubmitParams({ ...submitParams, image: "./images/" + res.url })
     })
   };
 
   // 提交
   const Submit = () => {
-    apiFun.saveArticle({content:text,...submitParams}).then((res:any)=>{
+    apiFun.saveArticle({ content: text, ...submitParams }).then((res: any) => {
       onClose();
-      if(res.code==='0000') {
+      if (res.code === '0000') {
         message.success(res.msg);
-      }else {
+      } else {
         message.error(res.msg);
       }
     })
   };
   // Finish!
-  function handleEditorChange({ html, text }) {
+  function handleEditorChange({ text }) {
     // console.log('handleEditorChange', html, text);
     setText(text);
   }
   //  选中分类Tag
-  const handleChangeTag = (tagId: number, checked: any, tagType: string) => {
+  const handleChangeTag = (tagId: number, tagType: string) => {
     const tempTags = tags;
-    tempTags.map((tag, index) => (tag.id === tagId ? (tag.checked = true) : (tag.checked = false)));
+    tempTags.map((tag) => (tag.id === tagId ? (tag.checked = true) : (tag.checked = false)));
     // 改变 tags变量
     setTags([...tempTags]);
     // 改变提交参数
     setSubmitParams({ ...submitParams, type: tagType });
   };
-  useEffect(()=>{
-    apiFun.getAllTypes().then((res:any)=>{
-      if(res.code==='0000') {
+  useEffect(() => {
+    apiFun.getAllTypes().then((res: any) => {
+      if (res.code === '0000') {
         setTags(res.data);
-      }else {
+      } else {
         message.error("出错啦，请稍后重试");
       }
     })
-  },[])
+  }, [])
   return (
     <>
       <div className="header">
@@ -162,10 +164,10 @@ const NewArticles:React.FC=()=>{
           }
         />
       </div>
-      <MdEditor 
-        style={{ height: '500px' }} 
-        renderHTML={text => mdParser.render(text)} 
-        onChange={handleEditorChange} 
+      <MdEditor
+        style={{ height: '500px' }}
+        renderHTML={text => mdParser.render(text)}
+        onChange={handleEditorChange}
       />
       <Drawer
         title="发布文章"
@@ -191,7 +193,7 @@ const NewArticles:React.FC=()=>{
                 <CheckableTag
                   key={index}
                   checked={item.checked}
-                  onChange={checked => handleChangeTag(item.id, checked, item.type)}
+                  onChange={() => handleChangeTag(item.id, item.type)}
                 >
                   {item.type}
                 </CheckableTag>
@@ -205,7 +207,7 @@ const NewArticles:React.FC=()=>{
               showUploadList={false}
               beforeUpload={beforeUpload}
               onChange={handleChange}
-              customRequest={({ file, onSuccess, onError }) => customUpload({ file, onSuccess, onError })}
+              customRequest={({ file }) => customUpload({ file })}
             >
               {imageUrl ? (
                 <img src={imageUrl} alt="avatar" style={{ width: '100%', marginTop: '10px' }} />
@@ -242,7 +244,7 @@ const NewArticles:React.FC=()=>{
         </Form>
       </Drawer>
     </>
-    
+
   )
 }
 export default NewArticles;

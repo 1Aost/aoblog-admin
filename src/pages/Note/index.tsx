@@ -30,20 +30,16 @@ const Customer: React.FC = () => {
   // 修改状态
   const handleStatus = (status: number, id: number) => {
     changeReviewsStatus({ id, review_status: status }).then(res => {
-      if (res.code === '0000') {
-        message.success(res.msg);
-        // 更新 data 数据
-        setData((prevData) =>
-          prevData.map((item) => {
-            if (item.id === id) {
-              return { ...item, review_status: status };
-            }
-            return item;
-          })
-        );
-      } else {
-        message.error(res.msg);
-      }
+      message.success(res.msg);
+      // 更新 data 数据
+      setData((prevData) =>
+        prevData.map((item) => {
+          if (item.id === id) {
+            return { ...item, review_status: status };
+          }
+          return item;
+        })
+      );
     })
   };
   const columns: ColumnsType<DataType> = [
@@ -165,13 +161,9 @@ const Customer: React.FC = () => {
   }
   const onFinish = (values: any) => {
     replyReviews({ ...values, id: id }).then(res => {
-      if (res.code === '0000') {
-        message.success(res.msg);
-        setOpen(false);
-        fetchData();
-      } else {
-        message.error(res.msg);
-      }
+      message.success(res.msg);
+      setOpen(false);
+      fetchData();
     })
   };
 

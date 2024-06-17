@@ -3,7 +3,8 @@ import { Button, Form, Input, message, Modal, Tag, Upload } from 'antd';
 import { EditOutlined, LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import layout from 'antd/es/layout';
 import "./index.css"
-import { changeAdmin, getAdminByToken, uploadAvatar } from '@/services/Admins';
+import { changeAdmin, getAdminByToken } from '@/services/Admins';
+import { uploadAvatar } from '@/services/Upload';
 interface AdminType {
   admin_password: string
   admin_type: string
@@ -68,7 +69,7 @@ const Ownmessage: React.FC = () => {
     }
   };
   // 自定义上传函数
-  const customUpload = async ({ file }) => {
+  const customUpload = ({ file }) => {
     const formData = new FormData();
     formData.append('file', file);
     uploadAvatar(formData).then((res: any) => {

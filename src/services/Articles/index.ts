@@ -54,8 +54,3 @@ export async function changeCommentsStatus(params: { id: number, comments_status
 export async function replyComments(params: { reply: string, comments_id: number }): Promise<any> {
   return request.post("/api/articles/comment/reply", params);
 }
-
-// 上传图片
-export async function uploadImagwe(params: FormData): Promise<any> {
-  return request.postImg("/api/Upload", params)
-}

@@ -6,7 +6,7 @@ import ActionRender from '@/components-antd/Display/ActionRender';
 import HeaderGroup from '@/components-antd/Header/HeaderGroup';
 import "./index.css"
 import { addUser, deleteUser, getAllUsers } from '@/services/Users';
-import { uploadAvatar } from '@/services/Admins';
+import { uploadAvatar } from '@/services/Upload';
 interface DataType {
   key: string,
   id: number;
@@ -136,9 +136,7 @@ const Customer: React.FC = () => {
   const customUpload = ({ file }) => {
     const formData = new FormData();
     formData.append('file', file);
-    // console.log(formData);
     uploadAvatar(formData).then(res => {
-      // console.log(res.url);
       setImageUrl("./avatar/" + res.url);
     })
   };

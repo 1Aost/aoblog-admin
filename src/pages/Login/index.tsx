@@ -10,16 +10,10 @@ const Login: React.FC = () => {
   const navigateTo = useNavigate();
   const onFinish = (values: { username: string, password: string }) => {
     login(values).then(res => {
-      if (res.code === '0000') {
-        localStorage.setItem("admin_token", res.data as string);
-        message.success(res.msg);
-        localStorage.setItem("login_time", timestampToTime(Date.now(), true));
-        navigateTo("/main/home");
-      } else if (res.code === '5000') {
-        message.error(res.msg)
-      } else if (res.code === '5001') {
-        message.warning(res.msg)
-      }
+      localStorage.setItem("admin_token", res.data as string);
+      message.success(res.msg);
+      localStorage.setItem("login_time", timestampToTime(Date.now(), true));
+      navigateTo("/main/home");
     })
   };
 

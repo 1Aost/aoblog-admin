@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom';
 import { Button, Form, Input, message, Modal, Tag, Upload } from 'antd';
 import { EditOutlined, LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import layout from 'antd/es/layout';
@@ -16,7 +15,6 @@ interface AdminType {
 const Ownmessage: React.FC = () => {
   const [admin, setAdmin] = useState<any>({});
   const [open, setOpen] = useState<boolean>(false);
-  const navigate = useNavigate();
   const [form] = Form.useForm();
   // Modal对话框
   const showModal = (): void => {
@@ -81,14 +79,7 @@ const Ownmessage: React.FC = () => {
   const fetchData = () => {
     // 根据token获取用户信息
     getAdminByToken({ admin_token: localStorage.getItem("admin_token") }).then(res => {
-      if (res.code === '0000') {
-        setAdmin((res.data as Array<AdminType>)[0]);
-      } else if (res.code === '1111') {
-        message.error(res.msg);
-        navigate("/login");
-      } else {
-        message.error(res.msg);
-      }
+      setAdmin((res.data as Array<AdminType>)[0]);
     })
   };
 
@@ -103,13 +94,9 @@ const Ownmessage: React.FC = () => {
       avatar: imageUrl,
       admin_type: admin.admin_type
     }).then(res => {
-      if (res.code === '0000') {
-        message.success(res.msg);
-        setOpen(false);
-        fetchData();
-      } else {
-        message.error(res.msg);
-      }
+      message.success(res.msg);
+      setOpen(false);
+      fetchData();
     })
   };
 

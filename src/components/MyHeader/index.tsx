@@ -23,14 +23,7 @@ const MyHeader: React.FC = () => {
   useEffect(() => {
     // 根据token获取用户信息
     getAdminByToken({ admin_token: localStorage.getItem("admin_token") }).then(res => {
-      if (res.code === '0000') {
-        setAdmin((res.data as Array<AdminType>)[0]);
-      } else if (res.code === '1111') {
-        message.error(res.msg);
-        navigate("/login")
-      } else {
-        message.error(res.msg);
-      }
+      setAdmin((res.data as Array<AdminType>)[0]);
     }).catch(_err => {
       message.error("出错了，请稍后重试");
     })

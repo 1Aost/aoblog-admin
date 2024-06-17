@@ -4,8 +4,7 @@ import { Form, Input, Select, Tag, Upload } from 'antd';
 import { Space, Button, Modal, Table, message } from 'antd'
 import { PlusOutlined, LoadingOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
-import "./index.css"
-import { useNavigate } from 'react-router-dom';
+import "./index.css";
 import ActionRender from '@/components-antd/Display/ActionRender';
 import HeaderGroup from '@/components-antd/Header/HeaderGroup';
 import { addAdmin, changeAdmin, deleteAdmin, getAdminByToken, getAllAdmins, uploadAvatar } from '@/services/Admins';
@@ -84,7 +83,6 @@ const Manager: React.FC = () => {
   const [ids, setIds] = useState<number>(0);
   const [_subtype, setSubtype] = useState<string>('');
   const [status, setStatus] = useState<string>('');
-  const navigate = useNavigate();
   const showModal = (): void => {
     form.resetFields();
     setOpen(true);
@@ -161,13 +159,9 @@ const Manager: React.FC = () => {
   // 删除
   const handleDelete = (record: DataType) => {
     deleteAdmin({ id: record.id }).then(res => {
-      if (res.code === '6001') {
-        message.error(res.msg);
-      } else {
-        message.success(res.msg);
-        // 删除成功后重新获取数据
-        fetchData();
-      }
+      message.success(res.msg);
+      // 删除成功后重新获取数据
+      fetchData();
     })
   }
   // 修改中type的选择
@@ -176,29 +170,13 @@ const Manager: React.FC = () => {
   };
   // 新增和修改的回调函数
   const onFinish = (values: { admin_password: string, admin_type: string, admin_username: string }) => {
-    if (type === 1) {
-      addAdmin({ ...values, avatar: imageUrl }).then(res => {
-        if (res.code === '0000') {
-          message.success(res.msg);
-          setOpen(false);
-          fetchData();
-        } else {
-          message.error(res.msg);
-        }
-        form.resetFields();
-      })
-    } else if (type === 2) {
-      changeAdmin({ id: ids, ...values, avatar: imageUrl }).then(res => {
-        if (res.code === '0000') {
-          message.success(res.msg);
-          setOpen(false);
-          fetchData();
-        } else {
-          message.error(res.msg);
-        }
-        form.resetFields();
-      })
-    }
+    const req = type === 1 ? addAdmin({ ...values, avatar: imageUrl }) : changeAdmin({ id: ids, ...values, avatar: imageUrl });
+    req.then(res => {
+      message.success(res.msg);
+      setOpen(false);
+      fetchData();
+      form.resetFields();
+    })
   };
 
   // 修改
@@ -215,14 +193,7 @@ const Manager: React.FC = () => {
   useEffect(() => {
     // 根据token获取用户信息
     getAdminByToken({ admin_token: localStorage.getItem("admin_token") }).then(res => {
-      if (res.code === '0000') {
-        setStatus((res.data as Array<AdminType>)[0].admin_type);
-      } else if (res.code === '1111') {
-        message.error(res.msg);
-        navigate("/login")
-      } else {
-        message.error(res.msg);
-      }
+      setStatus((res.data as Array<AdminType>)[0].admin_type);
     })
   }, []);
 

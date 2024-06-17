@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom';
 import { Map } from "react-amap"
 import { Col, Row, Card, theme, message } from 'antd'
 import {
@@ -70,7 +69,6 @@ const Home: React.FC = () => {
   } = theme.useToken();
   const [data01, setData01] = useState<any[]>([]);
   const [admin, setAdmin] = useState<any>({});
-  const navigate = useNavigate();
   useEffect(() => {
     getAllArticles().then(res => {
       const newData = res.data.map((item: any) => ({
@@ -96,14 +94,7 @@ const Home: React.FC = () => {
   // 根据token获取用户信息
   useEffect(() => {
     getAdminByToken({ admin_token: localStorage.getItem("admin_token") }).then(res => {
-      if (res.code === '0000') {
-        setAdmin((res.data as Array<AdminType>)[0]);
-      } else if (res.code === '1111') {
-        message.error(res.msg);
-        navigate("/login")
-      } else {
-        message.error(res.msg);
-      }
+      setAdmin((res.data as Array<AdminType>)[0]);
     }).catch(_err => {
       message.error("出错了，请稍后重试");
     });

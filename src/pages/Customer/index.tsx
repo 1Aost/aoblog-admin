@@ -82,15 +82,7 @@ const Customer: React.FC = () => {
 
   // 删除
   const handleDelete = (record: DataType) => {
-    deleteUser({ id: record.id }).then(res => {
-      if (res.code === '6001') {
-        message.error(res.msg);
-      } else {
-        message.success(res.msg);
-        // 删除成功后重新获取数据
-        fetchData();
-      }
-    })
+    deleteUser({ id: record.id }).then(() => fetchData());
   }
   /**
    *  上传图片
@@ -146,13 +138,9 @@ const Customer: React.FC = () => {
   }
   const onFinish = (values: { username: string, password: string }) => {
     addUser({ ...values, avatar: imageUrl }).then(res => {
-      if (res.code === '0000') {
-        message.success(res.msg);
-        setOpen(false);
-        fetchData();
-      } else {
-        message.error(res.msg);
-      }
+      message.success(res.msg);
+      setOpen(false);
+      fetchData();
     })
     form.resetFields();
   };

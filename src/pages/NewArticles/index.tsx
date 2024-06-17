@@ -143,11 +143,7 @@ const NewArticles: React.FC = () => {
   };
   useEffect(() => {
     getAllTypes().then(res => {
-      if (res.code === '0000') {
-        setTags(res.data);
-      } else {
-        message.error("出错啦，请稍后重试");
-      }
+      setTags(res.data);
     })
   }, [])
   return (

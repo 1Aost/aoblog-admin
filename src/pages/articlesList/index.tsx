@@ -138,13 +138,9 @@ const ArticlesList: React.FC = () => {
     const typeData: string[] = [];
     // 获取所有的类型
     getAllTypes().then(res => {
-      if (res.code === "0000") {
-        (res.data as Array<MyType>).map((item: MyType) => {
-          return typeData.push(item.type);
-        })
-      } else {
-        message.error(res.msg);
-      }
+      (res.data as Array<MyType>).map((item: MyType) => {
+        return typeData.push(item.type);
+      })
       setType(typeData);
     }).catch(_err => {
       message.error("出错了，请稍后重试");

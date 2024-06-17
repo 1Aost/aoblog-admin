@@ -38,12 +38,8 @@ const ArticlesType: React.FC = () => {
       fixed: 'right',
       render: (_, record) => (
         <ActionRender
-          onEdit={(e) => {
-            handleChange(e, record)
-          }}
-          onDelete={(e) => {
-            handleDelete(e, record)
-          }}
+          onEdit={() => handleChange(record)}
+          onDelete={() => handleDelete(record)}
         />
       ),
     },
@@ -64,32 +60,22 @@ const ArticlesType: React.FC = () => {
   const fetchData = () => {
     // 获取所有的类型
     getAllTypes().then(res => {
-      if (res.code === "0000") {
-        const typeData: MyType[] = (res.data as Array<MyType>).map((item: MyType) => item)
-        setType(typeData);
-      } else {
-        message.error(res.msg);
-      }
+      const typeData: MyType[] = (res.data as Array<MyType>).map((item: MyType) => item)
+      setType(typeData);
     }).catch(_err => {
       message.error("出错了，请稍后重试");
     })
   };
   // 删除
-  const handleDelete = (e: any, record: DataType) => {
-    e.preventDefault();
+  const handleDelete = (record: DataType) => {
     deleteType({ id: record.id }).then(res => {
-      if (res.code === '0000') {
-        message.success(res.msg);
-        // 删除成功后重新获取数据
-        fetchData();
-      } else {
-        message.error(res.msg);
-      }
+      message.success(res.msg);
+      // 删除成功后重新获取数据
+      fetchData();
     })
   }
   // 修改
-  const handleChange = (e: any, record: DataType) => {
-    e.preventDefault();
+  const handleChange = (record: DataType) => {
     setSubType(2);
     showModal();
     setIds(record.id);
@@ -103,23 +89,15 @@ const ArticlesType: React.FC = () => {
   const onFinish = (values: { type: string }): void => {
     if (subtype === 1) {
       addType({ ...values }).then(res => {
-        if (res.code === '0000') {
-          message.success(res.msg);
-          setOpen(false);
-          fetchData();
-        } else {
-          message.error(res.msg);
-        }
+        message.success(res.msg);
+        setOpen(false);
+        fetchData();
       })
     } else if (subtype === 2) {
       changeType({ id: ids, ...values }).then(res => {
-        if (res.code === '0000') {
-          message.success(res.msg);
-          setOpen(false);
-          fetchData();
-        } else {
-          message.error(res.msg);
-        }
+        message.success(res.msg);
+        setOpen(false);
+        fetchData();
       })
     }
   };

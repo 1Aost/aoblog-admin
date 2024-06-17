@@ -9,8 +9,9 @@ import { Form } from 'antd';
 import { Tag, Input, Button, Drawer, Upload, message } from 'antd';
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons"
 import HeaderGroup from '@/components-antd/Header/HeaderGroup';
-import { saveArticle, uploadImagwe } from '@/services/Articles';
+import { saveArticle } from '@/services/Articles';
 import { getAllTypes } from '@/services/Types';
+import { uploadImagwe } from '@/services/Upload';
 /**
  *  组件外声明只加载一次
  * */
@@ -111,7 +112,7 @@ const NewArticles: React.FC = () => {
     }
   };
   // 自定义上传函数
-  const customUpload = async ({ file }) => {
+  const customUpload = ({ file }) => {
     const formData = new FormData();
     formData.append('file', file);
     uploadImagwe(formData).then(res => {

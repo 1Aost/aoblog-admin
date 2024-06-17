@@ -6,7 +6,8 @@ import type { ColumnsType } from 'antd/es/table';
 import { timestampToTime } from "@/api/utils"
 import ActionRender from '@/components-antd/Display/ActionRender';
 import { getAllTypes } from '@/services/Types';
-import { changeArticle, deleteArticle, getAllArticles, uploadImagwe } from '@/services/Articles';
+import { changeArticle, deleteArticle, getAllArticles } from '@/services/Articles';
+import { uploadImagwe } from '@/services/Upload';
 interface DataType {
   key: string,
   id: number;

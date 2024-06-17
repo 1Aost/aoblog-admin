@@ -7,7 +7,8 @@ import type { ColumnsType } from 'antd/es/table';
 import "./index.css";
 import ActionRender from '@/components-antd/Display/ActionRender';
 import HeaderGroup from '@/components-antd/Header/HeaderGroup';
-import { addAdmin, changeAdmin, deleteAdmin, getAdminByToken, getAllAdmins, uploadAvatar } from '@/services/Admins';
+import { addAdmin, changeAdmin, deleteAdmin, getAdminByToken, getAllAdmins } from '@/services/Admins';
+import { uploadAvatar } from '@/services/Upload';
 interface AdminType {
   admin_password: string
   admin_type: string

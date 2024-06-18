@@ -13,7 +13,7 @@ const Login: React.FC = () => {
       localStorage.setItem("admin_token", res.data as string);
       message.success(res.msg);
       localStorage.setItem("login_time", timestampToTime(Date.now(), true));
-      navigateTo("/main/home");
+      navigateTo("/home");
     })
   };
 

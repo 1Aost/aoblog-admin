@@ -17,38 +17,52 @@ const Ownmessage = lazy(() => import("@/pages/Ownmessage"));
 const routes = [
   {
     path: "/",
-    element: <Navigate to="/login"></Navigate>,
-  },
-  {
-    path: "/main",
     element: <Main />,
     children: [
+      {
+        path: '/',
+        element: <Navigate to="home" replace />,
+      },
       {
         path: "home",
         element: <Home />
       },
       {
-        path: "articlesList",
-        element: <ArticlesList />
+        path: 'articles',
+        children: [
+          {
+            path: "articlesList",
+            element: <ArticlesList />
+          },
+          {
+            path: "newArticles",
+            element: <NewArticles />
+          },
+          {
+            path: "ArticlesType",
+            element: <ArticlesType />
+          },
+          {
+            path: "articlesLike",
+            element: <ArticlesLike />
+          },
+        ]
       },
       {
-        path: "newArticles",
-        element: <NewArticles />
+        path: 'users',
+        children: [
+          {
+            path: "customer",
+            element: <Customer />
+          },
+          {
+            path: "manager",
+            element: <Manager />
+          },
+        ]
       },
       {
-        path: "ArticlesType",
-        element: <ArticlesType />
-      },
-      {
-        path: "customer",
-        element: <Customer />
-      },
-      {
-        path: "manager",
-        element: <Manager />
-      },
-      {
-        path: "note",
+        path: "notes",
         element: <Note />
       },
       {
@@ -58,10 +72,6 @@ const routes = [
       {
         path: "mine",
         element: <Ownmessage />
-      },
-      {
-        path: "articlesLike",
-        element: <ArticlesLike />
       },
     ]
   },

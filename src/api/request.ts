@@ -1,5 +1,5 @@
 import axios from 'axios'     //引入
-import { notification } from 'antd';
+import { message, notification } from 'antd';
 
 const baseURL = 'http://localhost:3001'
 
@@ -26,8 +26,14 @@ const request = {
         method: 'GET'
       }).then(res => {
         // 检查响应码并处理数据
-        if (res.data.code === 5000 || res.data.code === 401) {
+        if (res.data.code === 5000) {
           openNotification(res.data.msg);
+        } else if (res.data.code === 401 || res.data.code === 403) {
+          // openNotification(res.data.msg);
+          message.warning(res.data.msg, 5);
+          setTimeout(() => {
+            window.location.href = '/login';
+          }, 500);
         } else {
           resolve(res.data);
         }
@@ -45,8 +51,13 @@ const request = {
         method: 'POST'
       }).then(res => {
         // 检查响应码并处理数据
-        if (res.data.code === 5000 || res.data.code === 401) {
+        if (res.data.code === 5000) {
           openNotification(res.data.msg);
+        } else if (res.data.code === 401 || res.data.code === 403) {
+          message.warning(res.data.msg);
+          setTimeout(() => {
+            window.location.href = '/login';
+          }, 500);
         } else {
           resolve(res.data);
         }
@@ -64,8 +75,14 @@ const request = {
         method: 'POST'
       }).then(res => {
         // 检查响应码并处理数据
-        if (res.data.code === 5000 || res.data.code === 401) {
+        if (res.data.code === 5000) {
           openNotification(res.data.msg);
+        } else if (res.data.code === 401 || res.data.code === 403) {
+          // openNotification(res.data.msg);
+          message.warning(res.data.msg, 5);
+          setTimeout(() => {
+            window.location.href = '/login';
+          }, 500);
         } else {
           resolve(res.data);
         }
@@ -83,8 +100,14 @@ const request = {
         method: 'DELETE'
       }).then(res => {
         // 检查响应码并处理数据
-        if (res.data.code === 5000 || res.data.code === 401) {
+        if (res.data.code === 5000) {
           openNotification(res.data.msg);
+        } else if (res.data.code === 401 || res.data.code === 403) {
+          // openNotification(res.data.msg);
+          message.warning(res.data.msg, 5);
+          setTimeout(() => {
+            window.location.href = '/login';
+          }, 500);
         } else {
           resolve(res.data);
         }
@@ -102,8 +125,14 @@ const request = {
         method: 'PUT'
       }).then(res => {
         // 检查响应码并处理数据
-        if (res.data.code === 5000 || res.data.code === 401) {
+        if (res.data.code === 5000) {
           openNotification(res.data.msg);
+        } else if (res.data.code === 401 || res.data.code === 403) {
+          // openNotification(res.data.msg);
+          message.warning(res.data.msg, 5);
+          setTimeout(() => {
+            window.location.href = '/login';
+          }, 500);
         } else {
           resolve(res.data);
         }

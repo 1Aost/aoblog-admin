@@ -14,3 +14,8 @@ export async function deleteUser(params: { id: number }): Promise<any> {
 export async function addUser(params: { username: string, password: string, avatar: string | undefined }): Promise<any> {
   return request.post("/api/users", params);
 }
+
+// 判断token是否失效
+export async function LegalToken(params: { token: string | null }): Promise<any> {
+  return request.post("/api/users/tokenStatus", params);
+}

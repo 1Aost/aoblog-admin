@@ -36,7 +36,7 @@ const MyHeader: React.FC = () => {
   }
   const items = [
     {
-      label: <NavLink to="/main/mine">个人中心</NavLink>,
+      label: <NavLink to="/mine">个人中心</NavLink>,
       key: '0',
     },
     {

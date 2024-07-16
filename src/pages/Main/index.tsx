@@ -13,6 +13,7 @@ import {
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import MyHeader from '@/components/MyHeader';
+import { getAdminByToken } from '@/services/Admins';
 type MenuItem = Required<MenuProps>['items'][number];
 
 const breadcrumbNameMap: Record<string, string> = {
@@ -31,11 +32,20 @@ const breadcrumbNameMap: Record<string, string> = {
 const { Header, Sider, Content } = Layout;
 
 const Main: React.FC = () => {
+  const [admin, setAdmin] = useState<any>({});
   useEffect(() => {
     if (!localStorage.getItem("admin_token")) {
       message.warning("尚未登录");
       navigateTo("/login");
+    } else {
+      // 根据token获取用户信息
+      getAdminByToken({ admin_token: localStorage.getItem("admin_token") }).then(res => {
+        setAdmin(res.data[0]);
+      }).catch(_err => {
+        message.error("出错了，请稍后重试");
+      })
     }
+
   }, []);
   const [collapsed, setCollapsed] = useState(false);
   const {
@@ -108,7 +118,7 @@ const Main: React.FC = () => {
       </Sider>
       <Layout style={{ marginLeft: 200 }}>
         <Header style={{ padding: 0, background: colorBgContainer }}>
-          <MyHeader />
+          <MyHeader admin={admin} />
         </Header>
         <Content style={{ margin: '5px 16px', overflow: 'initial' }}>
           <Breadcrumb items={breadcrumbItems} />

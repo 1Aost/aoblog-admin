@@ -1,9 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Dropdown, Space, Avatar, message } from 'antd';
-import "./index.css"
-import { getAdminByToken } from '@/services/Admins';
-
+import { Dropdown, Avatar, message } from 'antd';
 interface AdminType {
   admin_password: string
   admin_type: string
@@ -11,29 +8,17 @@ interface AdminType {
   avatar: string
   id: number
 }
-const MyHeader: React.FC = () => {
+const MyHeader = (props: { admin: AdminType }) => {
+  const { admin } = props;
   const navigate = useNavigate();
-  const [admin, setAdmin] = useState<AdminType>({
-    admin_password: "",
-    admin_type: "",
-    admin_username: "",
-    avatar: "",
-    id: 0
-  });
-  useEffect(() => {
-    // 根据token获取用户信息
-    getAdminByToken({ admin_token: localStorage.getItem("admin_token") }).then(res => {
-      setAdmin((res.data as Array<AdminType>)[0]);
-    }).catch(_err => {
-      message.error("出错了，请稍后重试");
-    })
-  }, []);
-  function handleLogout(): void {
-    message.success("成功退出");
+
+  const handleLogout = () => {
     localStorage.removeItem("admin_token");
     localStorage.removeItem("login_time");
+    message.success("成功退出");
     navigate("/login");
-  }
+  };
+
   const items = [
     {
       label: <NavLink to="/mine">个人中心</NavLink>,
@@ -44,21 +29,16 @@ const MyHeader: React.FC = () => {
       key: '1',
     }
   ];
+
   return (
-    <Dropdown
-      className='drop'
-      menu={{
-        items,
-      }}
-      trigger={['click']}
-    >
-      <a href="###" onClick={(e) => e.preventDefault()}>
-        <span style={{ marginRight: "10px", color: "#666" }}>{admin.admin_username}</span>
-        <Space>
+    <div style={{ width: 100, marginLeft: "auto" }}>
+      <Dropdown menu={{ items }}>
+        <div style={{ marginRight: 15 }}>
+          <span style={{ marginRight: "10px", color: "#666" }}>{admin.admin_username}</span>
           <Avatar src={<img src={admin.avatar} alt="avatar" />} />
-        </Space>
-      </a>
-    </Dropdown>
+        </div>
+      </Dropdown>
+    </div>
   )
 }
 export default MyHeader;

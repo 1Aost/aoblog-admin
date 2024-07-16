@@ -1,8 +1,15 @@
-import React from 'react'
-import "./index.css"
-const Loading:React.FC=()=>{
+import React from "react";
+import { Spin } from "antd";
+
+const Loading = () => {
   return (
-    <h1>加载中...</h1>
+    <div style={{
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+    }}>
+      <Spin />
+    </div>
   )
 }
 export default Loading;

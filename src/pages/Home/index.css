@@ -1,56 +1,28 @@
-.box1 {
+.homeLeft {
+  display: flex;
+  flex-direction: column;
+}
+.homeLeft .userInfo {
+  display: flex;
   margin-bottom: 10px;
 }
-.box1 .user {
-  display: flex;
-  align-items: center;
-  padding-top: 42px;
-  margin-bottom: 85px;
-}
-.box1 .user .avatar {
-  flex: 0 0 auto;
-  margin-right: 2.4rem;
-  width: 7.5rem;
-  height: 7.5rem;
-  background-color: #f9f9f9;
-  border-radius: 50%;
-}
-.box1 .user .avatar img {
-  border-radius: 50%;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.box1 .user .userinfo .name {
+.homeLeft .userInfo .info .name {
   font-size: 32px;
   margin-bottom: 10px;
 }
-.box1 .user .userinfo .access {
+.homeLeft .userInfo .info .access {
   color: #999;
 }
-.box1 h3 {
-  margin-bottom: 1rem;
-}
-.box1 .login-info {
+.homeLeft .loginInfo {
   border-top: 1px solid #ccc;
-  padding-top: 15px;
+  padding-top: 10px;
 }
-.box1 .login-info p {
+.homeLeft .loginInfo div {
   line-height: 28px;
   font-size: 14px;
   color: #999;
 }
-.box1 .login-info p span {
+.homeLeft .loginInfo div span {
   color: #666;
   margin-left: 60px;
-}
-.box-card3 {
-  margin-top: 10px;
-}
-.righ .cr-left {
-  width: 600px;
-  height: 500px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
 }

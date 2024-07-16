@@ -1,63 +1,38 @@
-.box1 {
+.homeLeft {
+  display: flex;
+  flex-direction: column;
+
+  .userInfo {
+    display: flex;
     margin-bottom: 10px;
-    .user {
-        display: flex;
-        align-items: center;
-        padding-top: 42px;
-        margin-bottom: 85px;
-        .avatar {
-            flex: 0 0 auto;
-            margin-right: 2.4rem;
-            width: 7.5rem;
-            height: 7.5rem;
-            background-color: #f9f9f9;
-            border-radius: 50%;
-            img {
-                border-radius: 50%;
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-            }
-        }
-        .userinfo {
-            .name {
-                font-size: 32px;
-                margin-bottom: 10px;
-            }
-            .access {
-                color: #999;
-            }
-        }
+
+    .info {
+      .name {
+        font-size: 32px;
+        margin-bottom: 10px;
+      }
+
+      .access {
+        color: #999;
+      }
     }
-    h3 {
-        margin-bottom: 1rem;
+
+  }
+
+  .loginInfo {
+    border-top: 1px solid #ccc;
+    padding-top: 10px;
+
+    div {
+      line-height: 28px;
+      font-size: 14px;
+      color: #999;
+
+      span {
+        color: #666;
+        margin-left: 60px;
+      }
     }
-    .login-info {
-        border-top: 1px solid #ccc;
-        padding-top: 15px;
-        p {
-            line-height: 28px;
-            font-size: 14px;
-            color: #999;
-            span {
-                color: #666;
-                margin-left: 60px;
-            }
-        }
-    }
-}
-// .box-card2 {
-//     background-color: pink;
-// }
-.box-card3 {
-    margin-top: 10px;
-}
-.righ {
-    .cr-left {
-        width: 600px;
-        height: 500px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
+  }
+
 }

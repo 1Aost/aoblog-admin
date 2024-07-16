@@ -36,7 +36,7 @@ module.exports = {
         // 非空断言运算符向类型系统断言表达式不可为空
         '@typescript-eslint/no-non-null-assertion': 'off',
         '@typescript-eslint/no-unused-vars': [
-          'error',
+          process.env.NODE_ENV === 'development' ? 'warn' : 'error',
           {
             args: 'all',
             argsIgnorePattern: '^_',
@@ -100,8 +100,8 @@ module.exports = {
         "max-lines": ["warn", 600],
         "max-lines-per-function": ["warn", { max: 500, IIFEs: true }],
         'react/no-danger': 'warn',
-        "no-undef": "error",
-        "no-console": "error",
+        "no-undef": process.env.NODE_ENV === 'development' ? 'warn' : "error",
+        "no-console": process.env.NODE_ENV === 'development' ? 'warn' : "error",
       }
     }
   ]

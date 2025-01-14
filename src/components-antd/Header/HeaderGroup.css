@@ -1,0 +1,13 @@
+.header-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: center;
+  height: 100%;
+}
+.header-group .content {
+  display: flex;
+}
+.header-group .label {
+  flex-shrink: 0;
+}
